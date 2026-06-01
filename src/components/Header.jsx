@@ -92,18 +92,21 @@ export default function Header({ lang, setLang, currentPage, onNavigate }) {
         <div className="flex items-center justify-between py-2 border-b border-[#E0EBFC]/60 lg:pb-3 pb-2">
           
           {/* Brand Info (Logo, Clinic name, Location) */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div 
+            onClick={() => onNavigate('home')}
+            className="flex items-center gap-2 sm:gap-3 min-w-0 cursor-pointer group"
+          >
             <img 
               src="/logo/f1.png" 
               alt="Fathima Medical Clinic Logo" 
-              className="h-10 w-auto object-contain sm:h-12 md:h-14 shrink-0"
+              className="h-10 w-auto object-contain sm:h-12 md:h-14 shrink-0 transition-transform group-hover:scale-105"
               onError={(e) => {
                 // Fallback icon in case image is slow to render
                 e.target.style.display = 'none';
               }}
             />
             <div className="flex flex-col text-left min-w-0">
-              <span className="font-heading font-extrabold text-sm sm:text-base md:text-lg lg:text-xl text-[#0B4DBB] leading-tight break-words">
+              <span className="font-heading font-extrabold text-sm sm:text-base md:text-lg lg:text-xl text-[#0B4DBB] leading-tight break-words group-hover:text-[#0B4DBB]/85 transition-colors">
                 {current.name}
               </span>
               <span className="flex items-center gap-1 text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium">

@@ -4,8 +4,8 @@ import { Calendar, CheckCircle, Clock, Stethoscope, User, Phone } from 'lucide-r
 
 export default function AppointmentView({ lang }) {
   const [formData, setFormData] = useState({
-    name: 'Rahul K',
-    phone: '+91 8086537077',
+    name: '',
+    phone: '',
     specialty: 'General Medicine',
     doctor: 'FR',
     date: '',
@@ -232,7 +232,7 @@ export default function AppointmentView({ lang }) {
               </p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
               
               <h3 className={`font-heading font-bold text-lg text-[#333333] border-b border-gray-100 pb-3 mb-6 flex items-center gap-2 ${
                 lang === 'ML' ? 'font-malayalam font-bold' : ''
@@ -252,6 +252,7 @@ export default function AppointmentView({ lang }) {
                     <input 
                       type="text" 
                       required
+                      autoComplete="off"
                       placeholder={current.placeholderName}
                       className="w-full h-11 border border-[#E0EBFC] hover:border-[#0B4DBB]/40 focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] rounded-lg pl-10 pr-3 text-sm outline-none transition-colors"
                       value={formData.name}
@@ -270,6 +271,7 @@ export default function AppointmentView({ lang }) {
                     <input 
                       type="tel" 
                       required
+                      autoComplete="off"
                       placeholder="+91 XXXXX XXXXX"
                       className="w-full h-11 border border-[#E0EBFC] hover:border-[#0B4DBB]/40 focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] rounded-lg pl-10 pr-3 text-sm outline-none transition-colors"
                       value={formData.phone}

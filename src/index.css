@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-malayalam: 'Baloo Chettan 2', 'Manjari', sans-serif;
+  
+  /* Primary HSL colors for hospital */
+  --color-medical-blue: #0B4DBB;
+  --color-medical-hover: #073a91;
+  --color-medical-red: #FF1E2D;
+  --color-medical-border: #E0EBFC;
+  --color-medical-text: #333333;
+}
+
+/* Custom global styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Hide scrollbar utility for clean drawers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

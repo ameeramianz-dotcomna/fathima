@@ -6,6 +6,8 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    age: '',
+    gender: 'Male',
     specialty: 'General Medicine',
     date: '',
     time: ''
@@ -15,17 +17,40 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     setSuccess(true)
+
+    // Formulate rich WhatsApp booking request message
+    const message = `*FATHIMA MEDICAL CENTER - APPOINTMENT REQUEST*\n` +
+                    `----------------------------------------\n` +
+                    `*Patient Name:* ${formData.name}\n` +
+                    `*Phone Number:* ${formData.phone}\n` +
+                    `*Patient Age:* ${formData.age || 'N/A'}\n` +
+                    `*Gender:* ${formData.gender}\n` +
+                    `*Specialty:* ${formData.specialty}\n` +
+                    `*Preferred Date:* ${formData.date}\n` +
+                    `*Preferred Time:* ${formData.time}\n` +
+                    `----------------------------------------\n` +
+                    `_Sent via Fathima Medical Website Modal Book Desk_`
+
+    const waUrl = `https://wa.me/918086537077?text=${encodeURIComponent(message)}`
+
+    // Open WhatsApp after a brief delay for checkmark animation satisfaction
+    setTimeout(() => {
+      window.open(waUrl, '_blank', 'noopener,noreferrer')
+    }, 800)
+
     setTimeout(() => {
       setSuccess(false)
       setFormData({
         name: '',
         phone: '',
+        age: '',
+        gender: 'Male',
         specialty: 'General Medicine',
         date: '',
         time: ''
       })
       onClose()
-    }, 3000)
+    }, 4500)
   }
 
   const specialties = {
@@ -119,6 +144,41 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
+                  </div>
+
+                  {/* Age & Gender Row */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Age */}
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className={`text-sm font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-xs font-semibold' : ''}`}>
+                        {lang === 'EN' ? 'Age' : lang === 'ML' ? 'പ്രായം' : 'العمر'}
+                      </label>
+                      <input 
+                        type="number" 
+                        required
+                        min="0"
+                        max="125"
+                        placeholder={lang === 'EN' ? 'e.g. 28' : lang === 'ML' ? 'ഉദാ: 28' : 'مثال: ٢٨'}
+                        className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none"
+                        value={formData.age}
+                        onChange={e => setFormData({ ...formData, age: e.target.value })}
+                      />
+                    </div>
+                    {/* Gender */}
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className={`text-sm font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-xs font-semibold' : ''}`}>
+                        {lang === 'EN' ? 'Gender' : lang === 'ML' ? 'ലിംഗം' : 'الجنس'}
+                      </label>
+                      <select 
+                        className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none bg-white"
+                        value={formData.gender}
+                        onChange={e => setFormData({ ...formData, gender: e.target.value })}
+                      >
+                        <option value="Male">{lang === 'EN' ? 'Male' : lang === 'ML' ? 'പുരുഷൻ' : 'ذكر'}</option>
+                        <option value="Female">{lang === 'EN' ? 'Female' : lang === 'ML' ? 'സ്ത്രീ' : 'أنثى'}</option>
+                        <option value="Other">{lang === 'EN' ? 'Other' : lang === 'ML' ? 'മറ്റുള്ളവ' : 'آخر'}</option>
+                      </select>
+                    </div>
                   </div>
 
                   {/* Specialty */}

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, CheckCircle, Clock, Stethoscope, User, Phone } from 'lucide-react'
 
-export default function AppointmentView({ lang }) {
+export default function AppointmentView({ lang, prefill }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    age: '',
+    gender: 'Male',
     specialty: 'General Medicine',
     doctor: 'FR',
     date: '',
@@ -101,6 +103,27 @@ export default function AppointmentView({ lang }) {
     }))
   }, [lang])
 
+  // Handle incoming doctor prefill selections (automatically maps doctor -> specialty)
+  useEffect(() => {
+    if (prefill && prefill.doctor) {
+      const docCode = prefill.doctor
+      let specIdx = 0 // General Medicine by default
+      
+      if (docCode === 'FR') specIdx = 0
+      else if (docCode === 'MT' || docCode === 'JM') specIdx = 1
+      else if (docCode === 'SK') specIdx = 2
+
+      const currentSpecs = specialties[lang] || specialties['EN']
+      const targetSpec = currentSpecs[specIdx] || currentSpecs[0]
+
+      setFormData(prev => ({
+        ...prev,
+        doctor: docCode,
+        specialty: targetSpec
+      }))
+    }
+  }, [prefill, lang])
+
   const handleSpecialtyChange = (specValue) => {
     const currentSpecs = specialties[lang] || specialties['EN']
     const idx = currentSpecs.indexOf(specValue)
@@ -151,6 +174,8 @@ export default function AppointmentView({ lang }) {
                     `----------------------------------------\n` +
                     `*Patient Name:* ${formData.name}\n` +
                     `*Phone Number:* ${formData.phone}\n` +
+                    `*Patient Age:* ${formData.age}\n` +
+                    `*Gender:* ${formData.gender}\n` +
                     `*Specialty:* ${formData.specialty}\n` +
                     `*Consultant Doctor:* ${docName}\n` +
                     `*Preferred Date:* ${formData.date}\n` +
@@ -169,7 +194,7 @@ export default function AppointmentView({ lang }) {
     // Reset local form states
     setTimeout(() => {
       setSuccess(false)
-      setFormData({ name: '', phone: '', specialty: 'General Medicine', doctor: 'FR', date: '', time: '', symptoms: '' })
+      setFormData({ name: '', phone: '', age: '', gender: 'Male', specialty: 'General Medicine', doctor: 'FR', date: '', time: '', symptoms: '' })
     }, 4500)
   }
 
@@ -278,6 +303,39 @@ export default function AppointmentView({ lang }) {
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
                   </div>
+                </div>
+
+                {/* Age Input */}
+                <div className="flex flex-col gap-1.5 text-left">
+                  <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                    {lang === 'EN' ? 'Patient Age' : lang === 'ML' ? 'രോഗിയുടെ പ്രായം' : 'عمر المريض'}
+                  </label>
+                  <input 
+                    type="number" 
+                    required
+                    min="0"
+                    max="125"
+                    placeholder={lang === 'EN' ? 'e.g. 28' : lang === 'ML' ? 'ഉദാ: 28' : 'مثال: ٢٨'}
+                    className="w-full h-11 border border-[#E0EBFC] hover:border-[#0B4DBB]/40 focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] rounded-lg px-3 text-sm outline-none transition-colors"
+                    value={formData.age}
+                    onChange={e => setFormData({ ...formData, age: e.target.value })}
+                  />
+                </div>
+
+                {/* Gender Select */}
+                <div className="flex flex-col gap-1.5 text-left">
+                  <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                    {lang === 'EN' ? 'Gender' : lang === 'ML' ? 'ലിംഗം' : 'الجنس'}
+                  </label>
+                  <select 
+                    className="w-full h-11 border border-[#E0EBFC] hover:border-[#0B4DBB]/40 focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] rounded-lg px-3 text-sm outline-none bg-white transition-colors"
+                    value={formData.gender}
+                    onChange={e => setFormData({ ...formData, gender: e.target.value })}
+                  >
+                    <option value="Male">{lang === 'EN' ? 'Male' : lang === 'ML' ? 'പുരുഷൻ' : 'ذكر'}</option>
+                    <option value="Female">{lang === 'EN' ? 'Female' : lang === 'ML' ? 'സ്ത്രീ' : 'أنثى'}</option>
+                    <option value="Other">{lang === 'EN' ? 'Other' : lang === 'ML' ? 'മറ്റുള്ളവ' : 'آخر'}</option>
+                  </select>
                 </div>
 
                 {/* Specialty Dropdown */}

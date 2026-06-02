@@ -46,7 +46,7 @@ export default function Footer({ lang }) {
   const isRtl = lang === 'AR'
 
   return (
-    <footer id="contact" className="bg-gray-50 border-t border-[#E0EBFC] py-12 md:py-16">
+    <footer id="contact" className="bg-[#0B4DBB] text-white border-t border-blue-500/30 py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Core footer details */}
@@ -54,13 +54,13 @@ export default function Footer({ lang }) {
           
           {/* Col 1: Address */}
           <div className="flex flex-col gap-3">
-            <h4 className={`font-heading font-extrabold text-sm text-[#0B4DBB] uppercase tracking-wider flex items-center gap-2 ${
+            <h4 className={`font-heading font-extrabold text-sm text-white uppercase tracking-wider flex items-center gap-2 ${
               lang === 'ML' ? 'font-malayalam text-xs' : ''
             }`}>
-              <MapPin className="w-4 h-4" />
+              <MapPin className="w-4 h-4 text-blue-200" />
               {current.addressLabel}
             </h4>
-            <p className={`text-sm text-gray-500 leading-relaxed font-medium ${
+            <p className={`text-sm text-blue-100 leading-relaxed font-medium ${
               lang === 'ML' ? 'font-malayalam' : ''
             }`}>
               {current.address}
@@ -69,15 +69,15 @@ export default function Footer({ lang }) {
 
           {/* Col 2: Telephone */}
           <div className="flex flex-col gap-3">
-            <h4 className={`font-heading font-extrabold text-sm text-[#0B4DBB] uppercase tracking-wider flex items-center gap-2 ${
+            <h4 className={`font-heading font-extrabold text-sm text-white uppercase tracking-wider flex items-center gap-2 ${
               lang === 'ML' ? 'font-malayalam text-xs' : ''
             }`}>
-              <PhoneCall className="w-4 h-4" />
+              <PhoneCall className="w-4 h-4 text-blue-200" />
               {current.phoneLabel}
             </h4>
             <a 
               href={`tel:${current.phone}`} 
-              className="text-lg font-black text-[#333333] hover:text-[#0B4DBB] transition-colors"
+              className="text-lg font-black text-white hover:text-blue-200 transition-colors"
             >
               {current.phone}
             </a>
@@ -85,13 +85,13 @@ export default function Footer({ lang }) {
 
           {/* Col 3: Hours */}
           <div className="flex flex-col gap-3">
-            <h4 className={`font-heading font-extrabold text-sm text-[#0B4DBB] uppercase tracking-wider flex items-center gap-2 ${
+            <h4 className={`font-heading font-extrabold text-sm text-white uppercase tracking-wider flex items-center gap-2 ${
               lang === 'ML' ? 'font-malayalam text-xs' : ''
             }`}>
-              <Clock className="w-4 h-4" />
+              <Clock className="w-4 h-4 text-blue-200" />
               {current.hoursLabel}
             </h4>
-            <p className={`text-sm text-gray-500 whitespace-pre-line font-medium leading-relaxed ${
+            <p className={`text-sm text-blue-100 whitespace-pre-line font-medium leading-relaxed ${
               lang === 'ML' ? 'font-malayalam' : ''
             }`}>
               {current.hours}
@@ -100,15 +100,15 @@ export default function Footer({ lang }) {
 
           {/* Col 4: Queries */}
           <div className="flex flex-col gap-3">
-            <h4 className={`font-heading font-extrabold text-sm text-[#0B4DBB] uppercase tracking-wider flex items-center gap-2 ${
+            <h4 className={`font-heading font-extrabold text-sm text-white uppercase tracking-wider flex items-center gap-2 ${
               lang === 'ML' ? 'font-malayalam text-xs' : ''
             }`}>
-              <Mail className="w-4 h-4" />
+              <Mail className="w-4 h-4 text-blue-200" />
               {current.emailLabel}
             </h4>
             <a 
               href={`mailto:${current.email}`} 
-              className="text-sm font-bold text-gray-700 hover:text-[#0B4DBB] transition-colors break-all"
+              className="text-sm font-bold text-blue-50 hover:text-blue-200 transition-colors break-all underline"
             >
               {current.email}
             </a>
@@ -117,10 +117,10 @@ export default function Footer({ lang }) {
         </div>
 
         {/* HIPAA Notice */}
-        <div className="border-t border-[#E0EBFC] pt-8 pb-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5 text-left bg-blue-50/50 border border-[#E0EBFC] p-3 rounded-lg max-w-2xl">
-            <ShieldAlert className="w-5 h-5 text-[#0B4DBB] shrink-0" />
-            <p className={`text-xs text-gray-500 font-medium ${
+        <div className="border-t border-blue-500/30 pt-8 pb-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 text-left bg-white/10 border border-white/20 p-3 rounded-lg max-w-2xl">
+            <ShieldAlert className="w-5 h-5 text-blue-200 shrink-0" />
+            <p className={`text-xs text-blue-50 font-medium ${
               lang === 'ML' ? 'font-malayalam font-semibold' : ''
             }`}>
               {current.hipaa}
@@ -129,12 +129,12 @@ export default function Footer({ lang }) {
           <img 
             src="/logo/f1.png" 
             alt="Fathima Logo footer" 
-            className="h-10 w-auto opacity-50 grayscale hover:grayscale-0 transition-all" 
+            className="h-10 w-auto opacity-80 brightness-0 invert transition-all" 
           />
         </div>
 
         {/* Copyright strip */}
-        <div className={`text-center mt-6 text-xs text-gray-400 font-semibold ${
+        <div className={`text-center mt-6 text-xs text-blue-200/60 font-semibold ${
           lang === 'ML' ? 'font-malayalam' : ''
         }`}>
           {current.copyright}

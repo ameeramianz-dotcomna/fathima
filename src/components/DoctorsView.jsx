@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Stethoscope, Award, Calendar, Search, Star } from 'lucide-react'
 
@@ -112,24 +112,36 @@ export default function DoctorsView({ lang, onNavigate }) {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 text-left">
       
-      {/* Page Header */}
-      <div className="border-b border-[#E0EBFC] pb-10 mb-12 text-center max-w-3xl mx-auto">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-bold text-[#0B4DBB] mb-4">
-          <Stethoscope className="w-3.5 h-3.5 text-[#0B4DBB]" />
-          {lang === 'EN' && 'Expert Medical Consultants'}
-          {lang === 'ML' && 'കൺസൾട്ടിംഗ് ഡോക്ടർമാർ'}
-          {lang === 'AR' && 'الاستشاريون الطبيون المعتمدون'}
-        </span>
-        <h1 className={`font-heading font-extrabold text-3xl md:text-4xl text-[#333333] mb-4 ${
-          lang === 'ML' ? 'font-malayalam' : ''
-        }`}>
-          {current.title}
-        </h1>
-        <p className={`text-slate-500 text-sm md:text-base leading-relaxed ${
-          lang === 'ML' ? 'font-malayalam font-medium' : ''
-        }`}>
-          {current.tagline}
-        </p>
+      {/* View Header with background image and premium gradient overlay */}
+      <div className="relative w-full rounded-3xl overflow-hidden mb-12 h-64 md:h-72 flex items-center justify-center text-center shadow-md border border-[#E0EBFC]">
+        {/* Background Image */}
+        <img 
+          src="/herosection/b1.png" 
+          alt="Consulting Doctors Background" 
+          className="absolute inset-0 w-full h-full object-cover object-center scale-105 filter brightness-95"
+        />
+        {/* Deep blue gradient overlay with logo-matching primary blue tint */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B4DBB]/95 via-[#0B4DBB]/85 to-blue-950/40" />
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-2xl px-6 py-8 text-white text-center flex flex-col items-center">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-bold text-white mb-4 backdrop-blur-sm">
+            <Stethoscope className="w-3.5 h-3.5 text-white" />
+            {lang === 'EN' && 'Expert Medical Consultants'}
+            {lang === 'ML' && 'കൺസൾട്ടിംഗ് ഡോക്ടർമാർ'}
+            {lang === 'AR' && 'الاستشاريون الطبيون المعتمدون'}
+          </span>
+          <h1 className={`font-heading font-extrabold text-3xl md:text-4xl text-white mb-3 drop-shadow-sm leading-tight ${
+            lang === 'ML' ? 'font-malayalam leading-relaxed' : ''
+          }`}>
+            {current.title}
+          </h1>
+          <p className={`text-blue-100 text-xs md:text-sm leading-relaxed max-w-lg mx-auto ${
+            lang === 'ML' ? 'font-malayalam font-medium' : ''
+          }`}>
+            {current.tagline}
+          </p>
+        </div>
       </div>
 
       {/* Specialty Filter Segmented Badges */}
@@ -212,7 +224,7 @@ export default function DoctorsView({ lang, onNavigate }) {
 
               <div className="flex gap-2">
                 <button 
-                  onClick={() => onNavigate('appointment')}
+                  onClick={() => onNavigate('appointment', { doctor: doc.initials })}
                   className={`flex-grow py-2.5 bg-blue-50 hover:bg-[#0B4DBB] text-[#0B4DBB] hover:text-white font-bold text-sm rounded-lg border border-[#E0EBFC] hover:border-transparent transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     lang === 'ML' ? 'font-malayalam' : ''
                   }`}

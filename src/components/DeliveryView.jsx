@@ -79,6 +79,24 @@ export default function DeliveryView({ lang }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    // Construct rich text WhatsApp prescription order message
+    const message = `*FATHIMA MEDICAL CENTER - PRESCRIPTION HOME DELIVERY*\n` +
+                    `----------------------------------------\n` +
+                    `*Patient Name:* ${formData.name}\n` +
+                    `*Contact Phone:* ${formData.phone}\n` +
+                    `*Delivery Address:* ${formData.address}\n` +
+                    `*Medicines / Requests:* ${formData.notes || 'None Specified'}\n` +
+                    `----------------------------------------\n` +
+                    `_Please attach your uploaded prescription photo/document in the chat below_\n` +
+                    `----------------------------------------\n` +
+                    `_Sent via Fathima Medical Delivery Counter_`
+
+    const waUrl = `https://wa.me/918086537077?text=${encodeURIComponent(message)}`
+    
+    // Open WhatsApp in new window
+    window.open(waUrl, '_blank', 'noopener,noreferrer')
+
     setSuccess(true)
     setTimeout(() => {
       setSuccess(false)

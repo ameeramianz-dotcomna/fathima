@@ -109,10 +109,16 @@ export default function Header({ lang, setLang, currentPage, onNavigate }) {
               <span className="font-heading font-extrabold text-sm sm:text-base md:text-lg lg:text-xl text-[#0B4DBB] leading-tight break-words group-hover:text-[#0B4DBB]/85 transition-colors">
                 {current.name}
               </span>
-              <span className="flex items-center gap-1 text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium">
-                <MapPin className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#FF1E2D] shrink-0" />
+              <a 
+                href="https://www.google.com/maps/dir/?api=1&destination=Fathima+Medical+Center+Vallapuzha"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-[10px] sm:text-xs md:text-sm text-gray-500 hover:text-[#0B4DBB] hover:underline font-medium transition-colors cursor-pointer"
+              >
+                <MapPin className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#FF1E2D] shrink-0 group-hover:animate-bounce" />
                 {current.location}
-              </span>
+              </a>
             </div>
           </div>
 
@@ -394,14 +400,7 @@ export default function Header({ lang, setLang, currentPage, onNavigate }) {
             </li>
           </ul>
 
-          <button 
-            onClick={() => onNavigate('appointment')}
-            className={`px-5 py-2 bg-[#0B4DBB] hover:bg-[#073a91] text-white text-sm font-bold rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer ${
-              lang === 'ML' ? 'font-malayalam' : ''
-            }`}
-          >
-            {lang === 'EN' ? 'Book Consultation' : lang === 'ML' ? 'കൺസൾട്ടേഷൻ ബുക്ക് ചെയ്യുക' : 'احجز استشارة'}
-          </button>
+
         </div>
 
       </div>

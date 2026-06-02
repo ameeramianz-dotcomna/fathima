@@ -1,8 +1,15 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Check, Heart, Award, ArrowRight, ShieldCheck, Activity } from 'lucide-react'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Check, Heart, Award, ArrowRight, ShieldCheck, Activity, X, MessageSquare } from 'lucide-react'
 
 export default function CheckupsView({ lang, onNavigate }) {
+  const [selectedPkg, setSelectedPkg] = useState(null)
+  const [bookingForm, setBookingForm] = useState({
+    name: '',
+    phone: '',
+    age: '',
+    gender: 'Male'
+  })
   
   const text = {
     EN: {
@@ -202,24 +209,36 @@ export default function CheckupsView({ lang, onNavigate }) {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 text-left">
       
-      {/* Page Header */}
-      <div className="border-b border-[#E0EBFC] pb-10 mb-12 text-center max-w-3xl mx-auto">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-xs font-bold text-[#0B4DBB] mb-4">
-          <Activity className="w-3.5 h-3.5 text-[#0B4DBB]" />
-          {lang === 'EN' && 'Preventive Clinical Screening'}
-          {lang === 'ML' && 'പ്രിവന്റീവ് ഹെൽത്ത് ചെക്കപ്പ്'}
-          {lang === 'AR' && 'الفحوصات السريرية الوقائية'}
-        </span>
-        <h1 className={`font-heading font-extrabold text-3xl md:text-4xl text-[#333333] mb-4 ${
-          lang === 'ML' ? 'font-malayalam' : ''
-        }`}>
-          {current.title}
-        </h1>
-        <p className={`text-slate-500 text-sm md:text-base leading-relaxed ${
-          lang === 'ML' ? 'font-malayalam font-medium' : ''
-        }`}>
-          {current.tagline}
-        </p>
+      {/* View Header with background image and premium gradient overlay */}
+      <div className="relative w-full rounded-3xl overflow-hidden mb-12 h-64 md:h-72 flex items-center justify-center text-center shadow-md border border-[#E0EBFC]">
+        {/* Background Image */}
+        <img 
+          src="/herosection/a1.png" 
+          alt="Diagnostic Screening Background" 
+          className="absolute inset-0 w-full h-full object-cover object-center scale-105 filter brightness-95"
+        />
+        {/* Deep blue gradient overlay with logo-matching primary blue tint */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B4DBB]/95 via-[#0B4DBB]/85 to-blue-950/40" />
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-2xl px-6 py-8 text-white text-center flex flex-col items-center">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-bold text-white mb-4 backdrop-blur-sm">
+            <Activity className="w-3.5 h-3.5 text-white" />
+            {lang === 'EN' && 'Preventive Clinical Screening'}
+            {lang === 'ML' && 'പ്രിവന്റീവ് ഹെൽത്ത് ചെക്കപ്പ്'}
+            {lang === 'AR' && 'الفحوصات السريرية الوقائية'}
+          </span>
+          <h1 className={`font-heading font-extrabold text-3xl md:text-4xl text-white mb-3 drop-shadow-sm leading-tight ${
+            lang === 'ML' ? 'font-malayalam leading-relaxed' : ''
+          }`}>
+            {current.title}
+          </h1>
+          <p className={`text-blue-100 text-xs md:text-sm leading-relaxed max-w-lg mx-auto ${
+            lang === 'ML' ? 'font-malayalam font-medium' : ''
+          }`}>
+            {current.tagline}
+          </p>
+        </div>
       </div>
 
       {/* Grid of customized Packages */}
@@ -271,9 +290,9 @@ export default function CheckupsView({ lang, onNavigate }) {
               </div>
             </div>
 
-            {/* Book Package button linking to Appointment Page */}
+            {/* Book Package button triggering the local form modal */}
             <button
-              onClick={() => onNavigate('appointment')}
+              onClick={() => setSelectedPkg(pkg)}
               className={`w-full py-3 px-4 rounded-xl font-bold text-xs shadow-sm bg-white border border-slate-200 hover:bg-[#0B4DBB] hover:text-white hover:border-transparent transition-all cursor-pointer flex items-center justify-center gap-1.5 group ${
                 lang === 'ML' ? 'font-malayalam' : ''
               }`}
@@ -313,6 +332,160 @@ export default function CheckupsView({ lang, onNavigate }) {
           ))}
         </div>
       </div>
+
+      {/* Sleek Package Booking Form Modal */}
+      <AnimatePresence>
+        {selectedPkg && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            
+            {/* Dark blur backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPkg(null)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            />
+
+            {/* Modal Card */}
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white border border-[#E0EBFC] rounded-3xl shadow-2xl overflow-hidden z-10 text-left"
+            >
+              
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 bg-[#0B4DBB] text-white border-b border-[#E0EBFC]">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-blue-100 tracking-wider">
+                    {lang === 'EN' ? 'Confirm Diagnostic Booking' : lang === 'ML' ? 'ഡയഗ്നോസ്റ്റിക് ബുക്കിംഗ് സ്ഥിരീകരിക്കുക' : 'تأكيد الحجز التشخيصي'}
+                  </span>
+                  <h3 className={`font-heading font-extrabold text-base leading-tight mt-0.5 ${lang === 'ML' ? 'font-malayalam font-bold' : ''}`}>
+                    {selectedPkg.title}
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedPkg(null)}
+                  className="p-1 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form Content */}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  
+                  // Construct WhatsApp Package Booking message with Demographics
+                  const message = `*FATHIMA MEDICAL CENTER - HEALTH CHECKUP BOOKING*\n` +
+                                  `----------------------------------------\n` +
+                                  `*Selected Package:* ${selectedPkg.title}\n` +
+                                  `*Price:* ${selectedPkg.price}\n` +
+                                  `----------------------------------------\n` +
+                                  `*Patient Name:* ${bookingForm.name}\n` +
+                                  `*Phone Number:* ${bookingForm.phone}\n` +
+                                  `*Patient Age:* ${bookingForm.age}\n` +
+                                  `*Gender:* ${bookingForm.gender}\n` +
+                                  `----------------------------------------\n` +
+                                  `Hello, I would like to book the ${selectedPkg.title} diagnostic wellness package with the patient details above. Please contact me to schedule a slot.\n` +
+                                  `----------------------------------------\n` +
+                                  `_Sent via Fathima Medical Website_`
+
+                  const waUrl = `https://wa.me/918086537077?text=${encodeURIComponent(message)}`
+                  window.open(waUrl, '_blank', 'noopener,noreferrer')
+                  
+                  // Close and reset
+                  setSelectedPkg(null)
+                  setBookingForm({ name: '', phone: '', age: '', gender: 'Male' })
+                }}
+                className="p-6 space-y-4"
+              >
+                
+                {/* Full Patient Name */}
+                <div className="flex flex-col gap-1.5">
+                  <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                    {lang === 'EN' ? 'Full Patient Name' : lang === 'ML' ? 'രോഗിയുടെ മുഴുവൻ പേര്' : 'اسم المريض الكامل'}
+                  </label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder={lang === 'EN' ? 'e.g. Rahul' : lang === 'ML' ? 'ഉദാ: രാഹുൽ' : 'مثال: أحمد'}
+                    className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none"
+                    value={bookingForm.name}
+                    onChange={e => setBookingForm({ ...bookingForm, name: e.target.value })}
+                  />
+                </div>
+
+                {/* Contact Phone */}
+                <div className="flex flex-col gap-1.5">
+                  <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                    {lang === 'EN' ? 'Phone Number' : lang === 'ML' ? 'ഫോൺ നമ്പർ' : 'رقم الهاتف'}
+                  </label>
+                  <input 
+                    type="tel" 
+                    required
+                    placeholder="+91 XXXXX XXXXX"
+                    className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none"
+                    value={bookingForm.phone}
+                    onChange={e => setBookingForm({ ...bookingForm, phone: e.target.value })}
+                  />
+                </div>
+
+                {/* Age & Gender Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Age */}
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                      {lang === 'EN' ? 'Age' : lang === 'ML' ? 'പ്രായം' : 'العمر'}
+                    </label>
+                    <input 
+                      type="number" 
+                      required
+                      min="0"
+                      max="125"
+                      placeholder={lang === 'EN' ? 'e.g. 28' : lang === 'ML' ? 'ഉദാ: 28' : 'مثال: ٢٨'}
+                      className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none"
+                      value={bookingForm.age}
+                      onChange={e => setBookingForm({ ...bookingForm, age: e.target.value })}
+                    />
+                  </div>
+                  {/* Gender */}
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className={`text-xs font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-[10px]' : ''}`}>
+                      {lang === 'EN' ? 'Gender' : lang === 'ML' ? 'ലിംഗം' : 'الجنس'}
+                    </label>
+                    <select 
+                      className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none bg-white"
+                      value={bookingForm.gender}
+                      onChange={e => setBookingForm({ ...bookingForm, gender: e.target.value })}
+                    >
+                      <option value="Male">{lang === 'EN' ? 'Male' : lang === 'ML' ? 'പുരുഷൻ' : 'ذكر'}</option>
+                      <option value="Female">{lang === 'EN' ? 'Female' : lang === 'ML' ? 'സ്ത്രീ' : 'أنثى'}</option>
+                      <option value="Other">{lang === 'EN' ? 'Other' : lang === 'ML' ? 'മറ്റുള്ളവ' : 'آخر'}</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Confirm Button */}
+                <button
+                  type="submit"
+                  className={`w-full py-3.5 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-extrabold rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mt-4 ${
+                    lang === 'ML' ? 'font-malayalam' : ''
+                  }`}
+                >
+                  <MessageSquare className="w-4 h-4 text-white" />
+                  <span>
+                    {lang === 'EN' ? 'Book via WhatsApp' : lang === 'ML' ? 'വാട്സ്ആപ്പ് വഴി ബുക്ക് ചെയ്യുക' : 'احجز عبر واتساب'}
+                  </span>
+                </button>
+
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   )

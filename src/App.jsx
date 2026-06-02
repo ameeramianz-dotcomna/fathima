@@ -9,12 +9,15 @@ import DeliveryView from './components/DeliveryView'
 import AppointmentView from './components/AppointmentView'
 import ContactView from './components/ContactView'
 import Footer from './components/Footer'
+import FloatingContactWidget from './components/FloatingContactWidget'
 
 export default function App() {
   const [lang, setLang] = useState('EN')
   const [currentPage, setCurrentPage] = useState('home')
+  const [bookingPrefill, setBookingPrefill] = useState(null)
 
-  const handleNavigate = (page) => {
+  const handleNavigate = (page, prefill = null) => {
+    setBookingPrefill(prefill)
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -41,7 +44,7 @@ export default function App() {
       case 'delivery':
         return <DeliveryView lang={lang} />
       case 'appointment':
-        return <AppointmentView lang={lang} />
+        return <AppointmentView lang={lang} prefill={bookingPrefill} />
       case 'contact':
         return <ContactView lang={lang} />
       default:
@@ -87,6 +90,9 @@ export default function App() {
 
       {/* Global Hospital Footer */}
       <Footer lang={lang} />
+
+      {/* Floating Premium Contact Widget */}
+      <FloatingContactWidget lang={lang} onNavigate={handleNavigate} />
     </div>
   )
 }

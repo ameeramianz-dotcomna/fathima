@@ -1,0 +1,317 @@
+/* Refined Premium Floating Contact Widget CSS */
+
+/* Color system & tokens */
+:root {
+  --fcw-primary: #0B4DBB; /* Hospital Brand Medical Blue */
+  --fcw-primary-hover: #073a91;
+  --fcw-primary-glow: rgba(11, 77, 187, 0.25);
+  
+  --fcw-whatsapp: #25D366; /* Authentic WhatsApp Green */
+  --fcw-whatsapp-hover: #128c7e;
+  --fcw-whatsapp-glow: rgba(37, 211, 102, 0.25);
+  
+  --fcw-glass-bg: rgba(255, 255, 255, 0.75);
+  --fcw-glass-border: rgba(255, 255, 255, 0.45);
+  --fcw-glass-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 
+                      0 1px 3px 0 rgba(0, 0, 0, 0.04), 
+                      0 0 1px 0 rgba(0, 0, 0, 0.12);
+  
+  --fcw-text-hover: #ffffff;
+  
+  --fcw-ripple: rgba(255, 255, 255, 0.35);
+}
+
+/* Dark mode overrides (system preference or explicit .dark class) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fcw-glass-bg: rgba(30, 43, 37, 0.82);
+    --fcw-glass-border: rgba(255, 255, 255, 0.08);
+    --fcw-glass-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.3), 
+                        0 1px 4px 0 rgba(0, 0, 0, 0.2), 
+                        0 0 1px 0 rgba(255, 255, 255, 0.1);
+    --fcw-text: #b0c0b8;
+  }
+}
+
+.dark :root {
+  --fcw-glass-bg: rgba(30, 43, 37, 0.82);
+  --fcw-glass-border: rgba(255, 255, 255, 0.08);
+  --fcw-glass-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.3), 
+                      0 1px 4px 0 rgba(0, 0, 0, 0.2), 
+                      0 0 1px 0 rgba(255, 255, 255, 0.1);
+  --fcw-text: #b0c0b8;
+}
+
+/* Outer layout wrapper (fixed right-bottom) */
+.floating-contact-container {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  pointer-events: none; /* Mouse clicks pass through wrapper empty spaces */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.floating-contact-container * {
+  pointer-events: auto;
+}
+
+/* Idle swaying animation */
+.floating-contact-idle-anim {
+  animation: floatingIdle 5s ease-in-out infinite;
+}
+
+@keyframes floatingIdle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Vertical stacking for active slide-up buttons */
+.fcw-buttons-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+/* Base button structure (uniform circles initially) */
+.fcw-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start; /* Keeps icon in fixed circular boundary */
+  border: none;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  
+  width: 48px;
+  max-width: 48px; /* Restricts button size to a perfect circle initially */
+  height: 48px;
+  border-radius: 50px;
+  
+  background: var(--fcw-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--fcw-glass-border);
+  box-shadow: var(--fcw-glass-shadow);
+  
+  /* Super smooth transitions for horizontal capsule growth */
+  transition: max-width 450ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease,
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Secondary Buttons default to Medical Blue */
+.fcw-btn-secondary {
+  color: var(--fcw-primary);
+}
+
+/* WhatsApp Button defaults to WhatsApp Green */
+.fcw-btn-whatsapp-trigger {
+  color: var(--fcw-whatsapp);
+}
+
+/* Uniform Circular Icon Wrap */
+.fcw-icon-container {
+  width: 46px; /* Accounts for border clearance */
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.fcw-icon-container svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  fill: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Specific SVG filled styles for brand WhatsApp */
+.fcw-btn-whatsapp-trigger svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Inside hidden inline labels */
+.fcw-btn-text {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--fcw-text-hover); /* Always white text inside green hover state */
+  transition: opacity 0.15s ease, max-width 0.35s ease, margin 0.35s ease;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Secondary Button Hover Capsule Transitions (Medical Blue) */
+.fcw-btn-secondary:hover {
+  max-width: 240px;
+  background-color: var(--fcw-primary);
+  color: var(--fcw-text-hover);
+  border-color: var(--fcw-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--fcw-primary-glow), var(--fcw-glass-shadow);
+}
+
+/* WhatsApp Button Hover Capsule Transitions (WhatsApp Green) */
+.fcw-btn-whatsapp-trigger:hover {
+  max-width: 240px;
+  background-color: var(--fcw-whatsapp);
+  color: var(--fcw-text-hover);
+  border-color: var(--fcw-whatsapp);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--fcw-whatsapp-glow), var(--fcw-glass-shadow);
+}
+
+.fcw-btn:hover .fcw-btn-text {
+  opacity: 1;
+  max-width: 180px; /* Expands mask to reveal label text */
+  margin-left: 4px;
+  margin-right: 18px;
+}
+
+.fcw-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* WhatsApp brand icon rotation micro-interaction on hover */
+.fcw-btn-whatsapp-trigger:hover .fcw-icon-container svg {
+  transform: rotate(12deg) scale(1.05);
+}
+
+/* Secondary calendar/telephone icons scale up slightly */
+.fcw-btn-secondary:hover .fcw-icon-container svg {
+  transform: scale(1.1);
+}
+
+/* Vertical menu items are constantly visible and interactive */
+.fcw-menu-item {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Focus visible styling for accessibility compliance */
+.fcw-btn:focus-visible {
+  box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px var(--fcw-primary);
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* Dynamic Click Ripples */
+.fcw-ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--fcw-ripple);
+  pointer-events: none;
+  transform: scale(0);
+  animation: clickRipple 550ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes clickRipple {
+  to {
+    transform: scale(3.8);
+    opacity: 0;
+  }
+}
+
+/* Responsive safety adjustments for mobile and tablets */
+@media (max-width: 640px) {
+  .floating-contact-container {
+    right: 18px;
+    bottom: 18px;
+    gap: 12px;
+  }
+
+  .fcw-btn {
+    width: 44px;
+    max-width: 44px;
+    height: 44px;
+  }
+
+  .fcw-icon-container {
+    width: 42px;
+    height: 42px;
+  }
+
+  .fcw-icon-container svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fcw-btn-text {
+    font-size: 13px;
+  }
+
+  .fcw-btn:hover {
+    max-width: 220px;
+  }
+
+  .fcw-btn:hover .fcw-btn-text {
+    margin-left: 2px;
+    margin-right: 14px;
+  }
+}
+
+/* RTL (Arabic Layout) Overrides */
+/* Automatically shifts layout and grows text rightwards */
+.floating-contact-container.is-rtl {
+  right: auto;
+  left: 28px;
+  align-items: flex-start;
+}
+
+.floating-contact-container.is-rtl .fcw-buttons-stack {
+  align-items: flex-start;
+}
+
+.floating-contact-container.is-rtl .fcw-btn {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.floating-contact-container.is-rtl .fcw-btn:hover .fcw-btn-text {
+  margin-left: 18px;
+  margin-right: 4px;
+}
+
+@media (max-width: 640px) {
+  .floating-contact-container.is-rtl {
+    right: auto;
+    left: 18px;
+  }
+
+  .floating-contact-container.is-rtl .fcw-btn:hover .fcw-btn-text {
+    margin-left: 14px;
+    margin-right: 2px;
+  }
+}

@@ -140,7 +140,7 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
   return (
     <div className="w-full">
       {/* Premium Hero Slider Component */}
-      <HeroSlider lang={lang} onOpenAppointment={onOpenAppointment} />
+      <HeroSlider lang={lang} onNavigate={onNavigate} onOpenAppointment={onOpenAppointment} />
 
       {/* Corporate Overview and Core Callout Grid */}
       <section className="bg-slate-50 py-16 border-b border-[#E0EBFC]/60">

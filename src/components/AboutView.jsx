@@ -178,32 +178,37 @@ export default function AboutView({ lang }) {
           </div>
 
           {/* Location & Details Widget */}
-          <div className="bg-white border border-[#E0EBFC] rounded-3xl p-8 shadow-sm">
+          <a 
+            href="https://www.google.com/maps/dir/?api=1&destination=Fathima+Medical+Center+Vallapuzha"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-white border border-[#E0EBFC] hover:border-red-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+          >
             <div className="flex items-center gap-3.5 mb-6">
-              <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#FF1E2D] flex items-center justify-center shrink-0 border border-red-100">
+              <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#FF1E2D] flex items-center justify-center shrink-0 border border-red-100 group-hover:scale-105 transition-transform duration-300">
                 <MapPin className="w-5 h-5" />
               </div>
-              <h3 className={`font-heading font-bold text-lg text-[#333333] ${
+              <h3 className={`font-heading font-bold text-lg text-[#333333] group-hover:text-[#0B4DBB] transition-colors duration-300 ${
                 lang === 'ML' ? 'font-malayalam font-bold' : ''
               }`}>
                 {current.locHeading}
               </h3>
             </div>
             
-            <p className={`text-sm text-gray-500 font-bold mb-4 ${
+            <p className={`text-sm text-gray-500 font-bold mb-4 group-hover:text-gray-700 transition-colors duration-300 ${
               lang === 'ML' ? 'font-malayalam' : ''
             }`}>
               {current.locDesc}
             </p>
 
             {/* Static visual map helper */}
-            <div className="h-32 bg-slate-100 border border-[#E0EBFC] rounded-xl flex items-center justify-center relative overflow-hidden">
+            <div className="h-32 bg-slate-100 border border-[#E0EBFC] rounded-xl flex items-center justify-center relative overflow-hidden group-hover:bg-slate-200/50 transition-colors duration-300">
               <div className="absolute inset-0 bg-[radial-gradient(#E0EBFC_1px,transparent_1px)] [background-size:16px_16px] opacity-60" />
-              <div className="w-12 h-12 bg-[#FF1E2D]/10 text-[#FF1E2D] rounded-full flex items-center justify-center border border-[#FF1E2D]/20 animate-pulse">
+              <div className="w-12 h-12 bg-[#FF1E2D]/10 text-[#FF1E2D] rounded-full flex items-center justify-center border border-[#FF1E2D]/20 animate-pulse group-hover:scale-110 transition-transform duration-300">
                 <MapPin className="w-6 h-6" />
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Clinical Credentials & Badges */}
           <div className="border border-[#E0EBFC] rounded-3xl p-6 bg-slate-50/50 space-y-4">

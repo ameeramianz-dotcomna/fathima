@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Calendar, PhoneCall, HeartPulse, ShieldAlert, Award, Clock } from 'lucide-react'
 
-export default function HeroSlider({ lang, onOpenAppointment }) {
+export default function HeroSlider({ lang, onNavigate, onOpenAppointment }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -126,6 +126,24 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
   const content = currentSlide.text[lang] || currentSlide.text['EN']
   const isRtl = lang === 'AR'
 
+  const handleCtaClick = () => {
+    if (activeIndex === 0) {
+      if (typeof onOpenAppointment === 'function') {
+        onOpenAppointment()
+      } else if (typeof onNavigate === 'function') {
+        onNavigate('appointment')
+      }
+    } else if (activeIndex === 1) {
+      if (typeof onNavigate === 'function') {
+        onNavigate('checkups')
+      }
+    } else if (activeIndex === 2) {
+      if (typeof onNavigate === 'function') {
+        onNavigate('about')
+      }
+    }
+  }
+
   return (
     <section 
       id="hero"
@@ -228,7 +246,7 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
                   className="pt-2 flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
                 >
                   <button
-                    onClick={onOpenAppointment}
+                    onClick={handleCtaClick}
                     className={`w-full sm:w-auto px-5 py-2.5 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-bold rounded-xl text-sm md:text-base shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 ${
                       lang === 'ML' ? 'font-malayalam' : ''
                     }`}

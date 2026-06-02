@@ -1,0 +1,75 @@
+Background: #FFFFFF
+Logo: Original colors
+Menu Text: #333333
+Hover: #0B4DBB
+Buttons
+
+Primary Button
+
+Background: #0B4DBB
+Text: #FFFFFF
+
+Secondary Button
+
+Background: #FF1E2D
+Text: #FFFFFF
+Borders
+
+Use a lighter version of the logo blue:
+Create a modern, premium, fully responsive hospital and clinic website using React, Vite, Tailwind CSS, and Framer Motion.
+
+DESIGN STYLE:
+- Professional healthcare design
+- Clean white background
+- Medical blue and teal color palette
+- Modern card-based UI
+- Smooth animations
+- Mobile-first responsive design
+- Accessibility friendly
+
+HEADER SECTION
+
+Create a two-level sticky header.
+
+TOP HEADER:
+
+Left Side:
+- Hospital logo
+- Hospital name
+- Location text below hospital name
+
+Right Side:
+Display the following action cards horizontally:
+
+1. Emergency Card
+   - Emergency icon
+   - Title: Emergency
+   - Phone number displayed(+91 8086537077)
+   - Click-to-call functionality
+
+2. Appointment Card
+   - Calendar icon
+   - Title: Book an Appointment
+   - Hover animation
+
+3. Health Checkup Card
+   - Medical icon
+   - Title: Book a Health Checkup
+   - Hover animation
+
+4. Find Doctor Card
+   - Doctor icon
+   - Title: Find a Doctor
+   - Hover animation
+
+5. Language Switcher
+   - EN / AR toggle button
+
+HEADER FEATURES:
+- Sticky on scroll
+- Background blur effect on scroll
+- Shadow appears when scrolling
+- Smooth hover effects
+- Professional hospital appearance
+
+NAVIGATION BAR

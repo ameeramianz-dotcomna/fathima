@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Stethoscope, Award, Calendar } from 'lucide-react'
 
 export default function Doctors({ lang, onOpenAppointment }) {
@@ -7,7 +7,7 @@ export default function Doctors({ lang, onOpenAppointment }) {
     EN: {
       title: 'Meet Our Consulting ',
       titleSpan: 'Doctors',
-      subtitle: 'Highly qualified and experienced healthcare practitioners dedicated to clinical excellence.',
+      subtitle: 'Highly qualified and experienced healthcare practitioners dedicated to clinical excellence. Drag or swipe to explore.',
       btnBook: 'Schedule Appointment',
       doc1Spec: 'General Medicine & Family Clinic',
       doc1Qual: 'MBBS, MD (General Medicine)',
@@ -22,7 +22,7 @@ export default function Doctors({ lang, onOpenAppointment }) {
     ML: {
       title: 'ഞങ്ങളുടെ കൺസൾട്ടിംഗ് ',
       titleSpan: 'ഡോക്ടർമാർ',
-      subtitle: 'മികച്ച ചികിത്സാ പരിചരണത്തിനായി സമർപ്പിതരായ യോഗ്യതയുള്ള പരിചയസമ്പന്നരായ ഡോക്ടർമാർ.',
+      subtitle: 'മികച്ച ചികിത്സാ പരിചരണത്തിനായി സമർപ്പിതരായ യോഗ്യതയുള്ള പരിചയസമ്പന്നരായ ഡോക്ടർമാർ. കാണാൻ ഡ്രാഗ് അല്ലെങ്കിൽ സ്വൈപ്പ് ചെയ്യുക.',
       btnBook: 'അപ്പോയിന്റ്മെന്റ് ബുക്ക് ചെയ്യുക',
       doc1Spec: 'ജനറൽ മെഡിസിൻ & ഫാമിലി ക്ലിനിക്ക്',
       doc1Qual: 'MBBS, MD (ജനറൽ മെഡിസിൻ)',
@@ -37,7 +37,7 @@ export default function Doctors({ lang, onOpenAppointment }) {
     AR: {
       title: 'قابل أطباءنا ',
       titleSpan: 'الاستشاريين',
-      subtitle: 'ممارسو رعاية صحية مؤهلون وذوو خبرة عالية مكرسون للتميز السريري.',
+      subtitle: 'ممارسو رعاية صحية مؤهلون وذوو خبرة عالية مكرسون للتميز السريري. اسحب للاستكشاف.',
       btnBook: 'جدولة موعد',
       doc1Spec: 'الطب العام وطب الأسرة',
       doc1Qual: 'بكالوريوس الطب والجراحة، دكتوراه في الطب (الطب العام)',
@@ -77,7 +77,7 @@ export default function Doctors({ lang, onOpenAppointment }) {
       image: '/doctor/jafar.jpg'
     },
     {
-      name: lang === 'EN' ? 'Dr. Suresh Kumar' : lang === 'ML' ? 'ഡോ. സുരേഷ് കുമാർ' : 'د. സൂരിш كومار',
+      name: lang === 'EN' ? 'Dr. Suresh Kumar' : lang === 'ML' ? 'ഡോ. സുരേഷ് കുമാർ' : 'د. സുരേഷ് കുമാർ',
       spec: current.doc3Spec,
       qual: current.doc3Qual,
       exp: lang === 'EN' ? '12+ Years Experience' : lang === 'ML' ? '12+ വർഷത്തെ പരിചയം' : 'خبرة ١٢+ عاماً',
@@ -87,6 +87,95 @@ export default function Doctors({ lang, onOpenAppointment }) {
 
   // Duplicate list to guarantee seamless infinite carousel scrolling without gaps
   const carouselDoctorsList = [...doctorsList, ...doctorsList, ...doctorsList]
+
+  const scrollRef = useRef(null)
+  const [isInteracting, setIsInteracting] = useState(false)
+  const dragInfo = useRef({ isDragging: false, startX: 0, scrollStart: 0 })
+
+  // Seamless wrap boundary checking
+  const handleScroll = () => {
+    const container = scrollRef.current
+    if (!container) return
+
+    const singleWidth = container.scrollWidth / 3
+    if (singleWidth <= 0) return
+
+    // Wrapping when scrolling too far left (towards 0) or too far right
+    if (container.scrollLeft <= 10) {
+      container.scrollLeft = singleWidth
+    } else if (container.scrollLeft >= singleWidth * 2 - 10) {
+      container.scrollLeft = singleWidth
+    }
+  }
+
+  // Set initial scroll position to middle list instance on mount
+  useEffect(() => {
+    const container = scrollRef.current
+    if (!container) return
+
+    const timer = setTimeout(() => {
+      const singleWidth = container.scrollWidth / 3
+      container.scrollLeft = singleWidth
+    }, 200)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Auto-scroll loop using requestAnimationFrame
+  useEffect(() => {
+    const container = scrollRef.current
+    if (!container) return
+
+    let animationFrameId
+    let lastTime = performance.now()
+
+    const scrollStep = (time) => {
+      // Only auto-scroll when user is NOT interacting
+      if (!isInteracting && !dragInfo.current.isDragging) {
+        // Slow speed sliding from left to right (decreasing scrollLeft)
+        container.scrollLeft -= 0.65
+
+        const singleWidth = container.scrollWidth / 3
+        if (container.scrollLeft <= 10) {
+          container.scrollLeft = singleWidth
+        }
+      }
+      lastTime = time
+      animationFrameId = requestAnimationFrame(scrollStep)
+    }
+
+    animationFrameId = requestAnimationFrame(scrollStep)
+
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [isInteracting])
+
+  // Mouse Drag Handlers
+  const handleMouseDown = (e) => {
+    const container = scrollRef.current
+    if (!container) return
+
+    setIsInteracting(true)
+    dragInfo.current.isDragging = true
+    dragInfo.current.startX = e.pageX - container.offsetLeft
+    dragInfo.current.scrollStart = container.scrollLeft
+  }
+
+  const handleMouseMove = (e) => {
+    const container = scrollRef.current
+    if (!container || !dragInfo.current.isDragging) return
+
+    e.preventDefault()
+    const x = e.pageX - container.offsetLeft
+    const walk = (x - dragInfo.current.startX) * 1.5 // multiplier controls drag speed
+    container.scrollLeft = dragInfo.current.scrollStart - walk
+  }
+
+  const handleMouseUpOrLeave = () => {
+    dragInfo.current.isDragging = false
+    setIsInteracting(false)
+  }
 
   return (
     <section id="doctors" className="bg-[#FFFFFF] py-16 md:py-24 border-b border-[#E0EBFC]/60 overflow-hidden">
@@ -108,13 +197,24 @@ export default function Doctors({ lang, onOpenAppointment }) {
         </div>
       </div>
 
-      {/* Marquee Row Container */}
-      <div className="w-full overflow-hidden mask-grad-horizontal py-4 relative">
-        <div className="animate-marquee-ltr flex gap-8">
+      {/* Marquee & Manual Scroll Container */}
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUpOrLeave}
+        onMouseLeave={handleMouseUpOrLeave}
+        onTouchStart={() => setIsInteracting(true)}
+        onTouchEnd={() => setIsInteracting(false)}
+        className="w-full overflow-x-auto no-scrollbar mask-grad-horizontal py-4 relative cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollBehavior: 'auto' }}
+      >
+        <div className="flex gap-8 w-max px-8">
           {carouselDoctorsList.map((doc, idx) => (
             <article 
               key={idx}
-              className="w-[290px] md:w-[320px] shrink-0 bg-white border border-[#E0EBFC] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col hover:border-[#0B4DBB]/40 text-left select-none"
+              className="w-[290px] md:w-[320px] shrink-0 bg-white border border-[#E0EBFC] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col hover:border-[#0B4DBB]/40 text-left select-none pointer-events-auto"
             >
               
               {/* Doctor Avatar Badge */}
@@ -162,9 +262,7 @@ export default function Doctors({ lang, onOpenAppointment }) {
 
                 <button 
                   onClick={onOpenAppointment}
-                  className={`w-full py-2 bg-blue-50 hover:bg-[#0B4DBB] text-[#0B4DBB] hover:text-white font-bold text-xs rounded-lg border border-[#E0EBFC] hover:border-transparent transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    lang === 'ML' ? 'font-malayalam' : ''
-                  }`}
+                  className="w-full py-2 bg-blue-50 hover:bg-[#0B4DBB] text-[#0B4DBB] hover:text-white font-bold text-xs rounded-lg border border-[#E0EBFC] hover:border-transparent transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Calendar className="w-3.5 h-3.5" />
                   {current.btnBook}

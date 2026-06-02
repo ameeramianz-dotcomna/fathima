@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import HeroSlider from './HeroSlider'
+import Doctors from './Doctors'
 import { Calendar, FileText, Search, ShieldAlert, Award, MessageSquare, Heart, Clock, MapPin, Star, Stethoscope } from 'lucide-react'
 
 // Smooth counting up animation using requestAnimationFrame
@@ -477,6 +478,9 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
           </div>
         </div>
       </section>
+
+      {/* Our Doctors Section */}
+      <Doctors lang={lang} onOpenAppointment={onOpenAppointment} />
 
       {/* Section 2: Premium Clinical Background Hero Banner */}
       <section className="relative w-full h-[460px] md:h-[480px] overflow-hidden flex items-center border-b border-[#E0EBFC]/60">

@@ -1,5 +1,4 @@
-﻿import React from 'react'
-import { motion } from 'framer-motion'
+import React from 'react'
 import { Stethoscope, Award, Calendar } from 'lucide-react'
 
 export default function Doctors({ lang, onOpenAppointment }) {
@@ -16,6 +15,8 @@ export default function Doctors({ lang, onOpenAppointment }) {
       doc2Qual: 'MBBS, DCH (Pediatrics)',
       doc3Spec: 'Consultant Orthopedist',
       doc3Qual: 'MBBS, MS (Orthopedics)',
+      doc4Spec: 'Consultant Paediatrician',
+      doc4Qual: 'MBBS, MD (Paediatrics)',
       available: 'Available Today'
     },
     ML: {
@@ -29,6 +30,8 @@ export default function Doctors({ lang, onOpenAppointment }) {
       doc2Qual: 'MBBS, DCH (പീഡിയാട്രിക്സ്)',
       doc3Spec: 'കൺസൾട്ടന്റ് ഓർത്തോപീഡിസ്റ്റ്',
       doc3Qual: 'MBBS, MS (ഓർത്തോപീഡിക്സ്)',
+      doc4Spec: 'കൺസൾട്ടന്റ് പീഡിയാട്രിക്സ്',
+      doc4Qual: 'MBBS, MD (പീഡിയാട്രിക്സ്)',
       available: 'ഇന്ന് ലഭ്യമാണ്'
     },
     AR: {
@@ -42,11 +45,13 @@ export default function Doctors({ lang, onOpenAppointment }) {
       doc2Qual: 'بكالوريوس الطب والجراحة، دبلوم صحة الطفل (الأطفال)',
       doc3Spec: 'استشاري جراحة العظام',
       doc3Qual: 'بكالوريوس الطب والجراحة، ماجستير جراحة العظام (العظام)',
+      doc4Spec: 'استشاري طب الأطفال',
+      doc4Qual: 'بكالوريوس الطب والجراحة، دكتوراه طب الأطفال',
       available: 'متاح اليوم'
     }
   }
 
-  const current = text[lang]
+  const current = text[lang] || text['EN']
 
   const doctorsList = [
     {
@@ -64,7 +69,15 @@ export default function Doctors({ lang, onOpenAppointment }) {
       initials: 'MT'
     },
     {
-      name: lang === 'EN' ? 'Dr. Suresh Kumar' : lang === 'ML' ? 'ഡോ. സുരേഷ് കുമാർ' : 'د. سوريш كومار',
+      name: lang === 'EN' ? 'Dr. Jafar Moideenkutty' : lang === 'ML' ? 'ഡോ. ജാഫർ മൊയ്‌തീൻകുട്ടി' : 'د. جعفر محي الدين كوتي',
+      spec: current.doc4Spec,
+      qual: current.doc4Qual,
+      exp: lang === 'EN' ? '11+ Years Experience' : lang === 'ML' ? '11+ വർഷത്തെ പരിചയം' : 'خبرة ١١+ عاماً',
+      initials: 'JM',
+      image: '/doctor/jafar.jpg'
+    },
+    {
+      name: lang === 'EN' ? 'Dr. Suresh Kumar' : lang === 'ML' ? 'ഡോ. സുരേഷ് കുമാർ' : 'د. സൂരിш كومار',
       spec: current.doc3Spec,
       qual: current.doc3Qual,
       exp: lang === 'EN' ? '12+ Years Experience' : lang === 'ML' ? '12+ വർഷത്തെ പരിചയം' : 'خبرة ١٢+ عاماً',
@@ -72,8 +85,11 @@ export default function Doctors({ lang, onOpenAppointment }) {
     }
   ]
 
+  // Duplicate list to guarantee seamless infinite carousel scrolling without gaps
+  const carouselDoctorsList = [...doctorsList, ...doctorsList, ...doctorsList]
+
   return (
-    <section id="doctors" className="bg-[#FFFFFF] py-16 md:py-24 border-b border-[#E0EBFC]/60">
+    <section id="doctors" className="bg-[#FFFFFF] py-16 md:py-24 border-b border-[#E0EBFC]/60 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -90,30 +106,28 @@ export default function Doctors({ lang, onOpenAppointment }) {
             {current.subtitle}
           </p>
         </div>
+      </div>
 
-        {/* Doctor Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {doctorsList.map((doc, idx) => (
-            <motion.article 
+      {/* Marquee Row Container */}
+      <div className="w-full overflow-hidden mask-grad-horizontal py-4 relative">
+        <div className="animate-marquee-ltr flex gap-8">
+          {carouselDoctorsList.map((doc, idx) => (
+            <article 
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.1 }}
-              className="bg-white border border-[#E0EBFC] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col hover:border-[#0B4DBB]/40 text-left"
+              className="w-[290px] md:w-[320px] shrink-0 bg-white border border-[#E0EBFC] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col hover:border-[#0B4DBB]/40 text-left select-none"
             >
               
-              {/* Doctor Avatar Badge (Aesthetic Medical Icon / Initials Block) */}
-              <div className="h-48 bg-gradient-to-br from-blue-50 to-[#E0EBFC]/40 flex items-center justify-center relative">
-                <div className="w-24 h-24 rounded-full bg-white border-2 border-[#0B4DBB]/20 shadow-inner flex items-center justify-center font-heading font-extrabold text-3xl text-[#0B4DBB] overflow-hidden">
+              {/* Doctor Avatar Badge */}
+              <div className="h-44 bg-gradient-to-br from-blue-50 to-[#E0EBFC]/40 flex items-center justify-center relative">
+                <div className="w-20 h-20 rounded-full bg-white border-2 border-[#0B4DBB]/20 shadow-inner flex items-center justify-center font-heading font-extrabold text-2xl text-[#0B4DBB] overflow-hidden">
                   {doc.image ? (
                     <img src={doc.image} alt={doc.name} className="w-full h-full object-cover" />
                   ) : (
                     doc.initials
                   )}
                 </div>
-                <div className={`absolute bottom-4 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 ${
-                  lang === 'ML' ? 'font-malayalam text-[9px]' : ''
+                <div className={`absolute bottom-3 right-3 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 ${
+                  lang === 'ML' ? 'font-malayalam text-[8px]' : ''
                 }`}>
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                   {current.available}
@@ -121,19 +135,18 @@ export default function Doctors({ lang, onOpenAppointment }) {
               </div>
 
               {/* Doctor details */}
-              <div className="p-6 flex-grow flex flex-col justify-between">
-                
+              <div className="p-5 flex-grow flex flex-col justify-between">
                 <div>
-                  <h3 className={`font-heading font-bold text-xl text-[#333333] mb-1 ${
+                  <h3 className={`font-heading font-bold text-lg text-[#333333] mb-1 leading-snug ${
                     lang === 'ML' ? 'font-malayalam font-bold' : ''
                   }`}>
                     {doc.name}
                   </h3>
-                  <p className={`text-sm font-semibold text-[#0B4DBB] mb-2 ${
-                    lang === 'ML' ? 'font-malayalam font-bold text-xs' : ''
+                  <p className={`text-xs font-semibold text-[#0B4DBB] mb-2 ${
+                    lang === 'ML' ? 'font-malayalam font-bold text-[11px]' : ''
                   }`}>{doc.spec}</p>
                   
-                  <div className={`space-y-1.5 py-3 border-y border-gray-100 my-4 text-xs font-medium text-gray-500 ${
+                  <div className={`space-y-1 py-2 border-y border-gray-100 my-3 text-[11px] font-medium text-gray-500 ${
                     lang === 'ML' ? 'font-malayalam font-medium' : ''
                   }`}>
                     <p className="flex items-center gap-2">
@@ -149,20 +162,18 @@ export default function Doctors({ lang, onOpenAppointment }) {
 
                 <button 
                   onClick={onOpenAppointment}
-                  className={`w-full py-2.5 bg-blue-50 hover:bg-[#0B4DBB] text-[#0B4DBB] hover:text-white font-bold text-sm rounded-lg border border-[#E0EBFC] hover:border-transparent transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`w-full py-2 bg-blue-50 hover:bg-[#0B4DBB] text-[#0B4DBB] hover:text-white font-bold text-xs rounded-lg border border-[#E0EBFC] hover:border-transparent transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     lang === 'ML' ? 'font-malayalam' : ''
                   }`}
                 >
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-3.5 h-3.5" />
                   {current.btnBook}
                 </button>
-
               </div>
 
-            </motion.article>
+            </article>
           ))}
         </div>
-
       </div>
     </section>
   )

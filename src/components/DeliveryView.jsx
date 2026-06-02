@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Upload, FileText, CheckCircle, Truck, PhoneCall, MessageSquare } from 'lucide-react'
+import { Upload, FileText, CheckCircle, Truck, PhoneCall, MessageSquare, Clipboard, Paperclip, Cloud } from 'lucide-react'
 
 export default function DeliveryView({ lang }) {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -11,6 +11,9 @@ export default function DeliveryView({ lang }) {
     notes: ''
   })
   const [success, setSuccess] = useState(false)
+  const [copiedSuccess, setCopiedSuccess] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadedUrl, setUploadedUrl] = useState(null)
 
   const text = {
     EN: {
@@ -77,20 +80,83 @@ export default function DeliveryView({ lang }) {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
+    let uploadedFileUrl = null
+    if (selectedFile) {
+      setIsUploading(true)
+      const uFormData = new FormData()
+      uFormData.append('file', selectedFile)
+      uFormData.append('expire', '86400') // 24 hours expiration
+
+      try {
+        const response = await fetch('https://tmpfiles.org/api/v1/upload', {
+          method: 'POST',
+          body: uFormData
+        })
+        if (response.ok) {
+          const resData = await response.json()
+          if (resData && resData.status === 'success' && resData.data && resData.data.url) {
+            uploadedFileUrl = resData.data.url
+            setUploadedUrl(uploadedFileUrl)
+            console.log('Prescription uploaded successfully to tmpfiles.org:', uploadedFileUrl)
+          } else {
+            console.warn('Upload API responded but format was unexpected:', resData)
+          }
+        } else {
+          console.warn('Upload request failed with status:', response.status)
+        }
+      } catch (err) {
+        console.warn('Prescription file upload failed:', err)
+      }
+      setIsUploading(false)
+    }
+
     // Construct rich text WhatsApp prescription order message
-    const message = `*FATHIMA MEDICAL CENTER - PRESCRIPTION HOME DELIVERY*\n` +
-                    `----------------------------------------\n` +
-                    `*Patient Name:* ${formData.name}\n` +
-                    `*Contact Phone:* ${formData.phone}\n` +
-                    `*Delivery Address:* ${formData.address}\n` +
-                    `*Medicines / Requests:* ${formData.notes || 'None Specified'}\n` +
-                    `----------------------------------------\n` +
-                    `_Please attach your uploaded prescription photo/document in the chat below_\n` +
-                    `----------------------------------------\n` +
-                    `_Sent via Fathima Medical Delivery Counter_`
+    let message = `*FATHIMA MEDICAL CENTER - PRESCRIPTION HOME DELIVERY*\n` +
+                  `----------------------------------------\n` +
+                  `*Patient Name:* ${formData.name}\n` +
+                  `*Contact Phone:* ${formData.phone}\n` +
+                  `*Delivery Address:* ${formData.address}\n` +
+                  `*Medicines / Requests:* ${formData.notes || 'None Specified'}\n` +
+                  `----------------------------------------\n`
+
+    if (uploadedFileUrl) {
+      const directDownloadUrl = uploadedFileUrl.replace('tmpfiles.org/', 'tmpfiles.org/dl/')
+      message += `*Prescription Image (View):* ${uploadedFileUrl}\n` +
+                 `*Prescription Image (Download):* ${directDownloadUrl}\n` +
+                 `----------------------------------------\n`
+    } else {
+      message += `_Please attach your uploaded prescription photo/document in the chat below_\n` +
+                 `----------------------------------------\n`
+    }
+
+    message += `_Sent via Fathima Medical Delivery Counter_`
+
+    // Attempt to copy the uploaded image to clipboard for easy copy/paste direct to WhatsApp chat (redundant fallback)
+    let copySuccessful = false
+    if (
+      !uploadedFileUrl &&
+      navigator.clipboard && 
+      typeof navigator.clipboard.write === 'function' && 
+      typeof ClipboardItem !== 'undefined' && 
+      selectedFile && 
+      selectedFile.type.startsWith('image/')
+    ) {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            [selectedFile.type]: selectedFile
+          })
+        ]);
+        console.log('Prescription image copied to clipboard successfully!');
+        copySuccessful = true
+      } catch (err) {
+        console.warn('Clipboard image write failed or not supported in this browser:', err);
+      }
+    }
+    setCopiedSuccess(copySuccessful)
 
     const waUrl = `https://wa.me/918086537077?text=${encodeURIComponent(message)}`
     
@@ -100,9 +166,11 @@ export default function DeliveryView({ lang }) {
     setSuccess(true)
     setTimeout(() => {
       setSuccess(false)
+      setCopiedSuccess(false)
+      setUploadedUrl(null)
       setSelectedFile(null)
       setFormData({ name: '', phone: '', address: '', notes: '' })
-    }, 4500)
+    }, 6500)
   }
 
   return (
@@ -154,6 +222,68 @@ export default function DeliveryView({ lang }) {
                 }`}>
                   {current.successDesc}
                 </p>
+
+                {/* Prescription upload/pasting instructions banner */}
+                {selectedFile && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className={`mt-6 p-4 border rounded-2xl max-w-md text-left flex items-start gap-3.5 shadow-sm transition-colors duration-300 ${
+                      uploadedUrl || copiedSuccess 
+                        ? 'bg-emerald-50/70 border-emerald-100' 
+                        : 'bg-blue-50/70 border-blue-100'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-xl shrink-0 ${
+                      uploadedUrl || copiedSuccess ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'
+                    }`}>
+                      {uploadedUrl ? (
+                        <Cloud className="w-5 h-5" />
+                      ) : copiedSuccess ? (
+                        <Clipboard className="w-5 h-5" />
+                      ) : (
+                        <Paperclip className="w-5 h-5" />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className={`text-xs font-black uppercase tracking-wider ${
+                        uploadedUrl || copiedSuccess ? 'text-emerald-800' : 'text-blue-800'
+                      }`}>
+                        {uploadedUrl ? (
+                          lang === 'EN' ? 'Prescription Uploaded!' : lang === 'ML' ? 'പ്രിസ്‌ക്രിപ്ഷൻ അപ്‌ലോഡ് ചെയ്തു!' : 'تم رفع الوصفة بنجاح!'
+                        ) : copiedSuccess ? (
+                          lang === 'EN' ? 'Prescription Copied!' : lang === 'ML' ? 'പ്രിസ്‌ക്രിപ്ഷൻ കോപ്പി ചെയ്തിട്ടുണ്ട്!' : 'تم نسخ الوصفة بنجاح!'
+                        ) : (
+                          lang === 'EN' ? 'Attach Prescription in Chat' : lang === 'ML' ? 'പ്രിസ്‌ക്രിപ്ഷൻ അറ്റാച്ച് ചെയ്യുക' : 'إرفاق الوصفة في الدردشة'
+                        )}
+                      </h4>
+                      <p className={`text-xs mt-1 leading-relaxed ${
+                        uploadedUrl || copiedSuccess ? 'text-emerald-700' : 'text-blue-700'
+                      }`}>
+                        {uploadedUrl ? (
+                          <>
+                            {lang === 'EN' && 'We successfully uploaded your prescription and included a secure viewing link directly in the WhatsApp message text. Just hit send when WhatsApp opens!'}
+                            {lang === 'ML' && 'നിങ്ങളുടെ പ്രിസ്‌ക്രിപ്ഷൻ ഞങ്ങൾ അപ്‌ലോഡ് ചെയ്ത് അതിന്റെ ലിങ്ക് വാട്സ്ആപ്പ് സന്ദേശത്തിൽ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്. വാട്സ്ആപ്പ് തുറക്കുമ്പോൾ മെസ്സേജ് സെൻഡ് ചെയ്താൽ മാത്രം മതിയാകും!'}
+                            {lang === 'AR' && 'لقد قمنا برفع صورة الوصفة الطبية الخاصة بك بنجاح وإرفاق رابطها في رسالة الواتساب. ما عليك سوى إرسال الرسالة عند فتح الواتساب!'}
+                          </>
+                        ) : copiedSuccess ? (
+                          <>
+                            {lang === 'EN' && 'We copied your prescription image. When WhatsApp opens, simply press Ctrl + V (or long press and Paste) in the chat bar to attach your prescription image!'}
+                            {lang === 'ML' && 'ഞങ്ങൾ നിങ്ങളുടെ പ്രിസ്‌ക്രിപ്ഷൻ ചിത്രം കോപ്പി ചെയ്തിട്ടുണ്ട്. വാട്സ്ആപ്പ് ഓപ്പൺ ചെയ്യുമ്പോൾ, നിങ്ങളുടെ പ്രിസ്‌ക്രിപ്ഷൻ ചിത്രം അയക്കുന്നതിനായി ചാറ്റ് ബാറിൽ Ctrl + V (അല്ലെങ്കിൽ അമർത്തിപ്പിടിച്ച് പേസ്റ്റ് ചെയ്യുക) അമർത്തുക!'}
+                            {lang === 'AR' && 'لقد قمنا بنسخ صورة الوصفة الطبية الخاصة بك. عندما يفتح الواتساب، ما عليك سوى الضغط على Ctrl + V (أو الضغط المطول ولصق) في شريط الدردشة لإرفاق صورتك!'}
+                          </>
+                        ) : (
+                          <>
+                            {lang === 'EN' && 'We have filled your delivery details in WhatsApp. Please make sure to click the attachment/paperclip button in the WhatsApp chat to send your prescription image!'}
+                            {lang === 'ML' && 'ഞങ്ങൾ നിങ്ങളുടെ വിവരങ്ങൾ വാട്സ്ആപ്പിൽ ഉൾപ്പെടുത്തിയിട്ടുണ്ട്. നിങ്ങളുടെ പ്രിസ്‌ക്രിപ്ഷൻ ചിത്രം അയക്കാൻ വാട്സ്ആപ്പ് ചാറ്റിലെ അറ്റാച്ച്‌മെന്റ് ബട്ടൺ ക്ലിക്ക് ചെയ്യുക!'}
+                            {lang === 'AR' && 'لقد قمنا بملء بياناتك في الواتساب. يرجى التأكد من النقر فوق زر المرفقات في دردشة الواتساب لإرسال صورة الوصفة الطبية الخاصة بك!'}
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -273,11 +403,23 @@ export default function DeliveryView({ lang }) {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className={`w-full py-3 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer ${
-                    lang === 'ML' ? 'font-malayalam' : ''
-                  }`}
+                  disabled={isUploading}
+                  className={`w-full py-3 text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 ${
+                    isUploading 
+                      ? 'bg-blue-400 cursor-not-allowed' 
+                      : 'bg-[#0B4DBB] hover:bg-[#073a91] cursor-pointer'
+                  } ${lang === 'ML' ? 'font-malayalam' : ''}`}
                 >
-                  {current.btnSubmit}
+                  {isUploading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      {lang === 'EN' && 'Uploading Prescription...'}
+                      {lang === 'ML' && 'പ്രിസ്‌ക്രിപ്ഷൻ അപ്‌ലോഡ് ചെയ്യുന്നു...'}
+                      {lang === 'AR' && 'جاري تحميل الوصفة الطبية...'}
+                    </>
+                  ) : (
+                    current.btnSubmit
+                  )}
                 </button>
 
               </form>

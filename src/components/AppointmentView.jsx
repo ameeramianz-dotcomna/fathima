@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, CheckCircle, Clock, Stethoscope, User, Phone } from 'lucide-react'
+import { Calendar, CheckCircle, Clock, Stethoscope, User, Phone, Download, MessageSquare } from 'lucide-react'
 
 export default function AppointmentView({ lang, prefill }) {
   const [formData, setFormData] = useState({
@@ -15,6 +15,8 @@ export default function AppointmentView({ lang, prefill }) {
     symptoms: ''
   })
   const [success, setSuccess] = useState(false)
+  const [isSent, setIsSent] = useState(false)
+  const [waLink, setWaLink] = useState('')
 
   const text = {
     EN: {
@@ -161,9 +163,182 @@ export default function AppointmentView({ lang, prefill }) {
     }))
   }
 
+  const handleReset = () => {
+    setSuccess(false)
+    setIsSent(false)
+    setWaLink('')
+    setFormData({ 
+      name: '', 
+      phone: '', 
+      age: '', 
+      gender: 'Male', 
+      specialty: 'General Medicine', 
+      doctor: 'FR', 
+      date: '', 
+      time: '', 
+      symptoms: '' 
+    })
+  }
+
+  const handleDownloadImage = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 600
+    canvas.height = 750
+    const ctx = canvas.getContext('2d')
+
+    ctx.imageSmoothingEnabled = true
+
+    // Background
+    ctx.fillStyle = '#FFFFFF'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    const headerImg = new Image()
+    headerImg.crossOrigin = 'anonymous'
+    headerImg.src = '/herosection/c1.png'
+
+    const drawContent = () => {
+      try {
+        if (headerImg.complete && headerImg.naturalWidth !== 0) {
+          ctx.drawImage(headerImg, 0, 0, canvas.width, 160)
+        }
+      } catch (e) {
+        console.warn(e)
+      }
+
+      // Draw primary blue color overlay
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, 160)
+      gradient.addColorStop(0, 'rgba(11, 77, 187, 0.95)')
+      gradient.addColorStop(1, 'rgba(3, 37, 108, 0.9)')
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, canvas.width, 160)
+
+      // Header Text
+      ctx.fillStyle = '#FFFFFF'
+      ctx.textAlign = 'center'
+      
+      ctx.font = '900 24px system-ui, -apple-system, sans-serif'
+      ctx.fillText('FATHIMA MEDICAL CENTER', canvas.width / 2, 60)
+
+      ctx.font = 'bold 12px system-ui, -apple-system, sans-serif'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.fillText('VALLAPUZHA, SH-60, KERALA - PH: 8086537077', canvas.width / 2, 85)
+
+      // Card Title Badge
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
+      ctx.fillRect(canvas.width / 2 - 130, 105, 260, 32)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+      ctx.strokeRect(canvas.width / 2 - 130, 105, 260, 32)
+      
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 13px system-ui, -apple-system, sans-serif'
+      ctx.fillText('APPOINTMENT CONFIRMATION SLIP', canvas.width / 2, 126)
+
+      // Content Box Background
+      ctx.fillStyle = '#F8FAFC'
+      ctx.fillRect(25, 185, canvas.width - 50, 430)
+      ctx.strokeStyle = '#E2E8F0'
+      ctx.lineWidth = 1
+      ctx.strokeRect(25, 185, canvas.width - 50, 430)
+
+      // Greeting
+      ctx.fillStyle = '#0B4DBB'
+      ctx.font = 'bold 20px system-ui, -apple-system, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(`Hello, ${formData.name || 'Patient'}!`, canvas.width / 2, 225)
+
+      ctx.fillStyle = '#475569'
+      ctx.font = '14px system-ui, -apple-system, sans-serif'
+      ctx.fillText('Your consultation slot request has been successfully registered.', canvas.width / 2, 250)
+
+      // Dotted divider
+      ctx.strokeStyle = '#CBD5E1'
+      ctx.lineWidth = 1.5
+      ctx.setLineDash([4, 4])
+      ctx.beginPath()
+      ctx.moveTo(40, 275)
+      ctx.lineTo(canvas.width - 40, 275)
+      ctx.stroke()
+      ctx.setLineDash([])
+
+      // Details drawing
+      const drawDetailRow = (label, value, yPos) => {
+        ctx.textAlign = 'left'
+        ctx.fillStyle = '#64748B'
+        ctx.font = 'bold 13px system-ui, -apple-system, sans-serif'
+        ctx.fillText(label.toUpperCase(), 50, yPos)
+
+        ctx.textAlign = 'right'
+        ctx.fillStyle = '#1E293B'
+        ctx.font = 'bold 14px system-ui, -apple-system, sans-serif'
+        ctx.fillText(value, canvas.width - 50, yPos)
+      }
+
+      const doctorObj = doctors.find(d => d.code === formData.doctor)
+      const docName = doctorObj ? doctorObj.name.split(' (')[0] : formData.doctor
+
+      drawDetailRow('Patient Name', formData.name || 'N/A', 315)
+      drawDetailRow('Contact Phone', formData.phone || 'N/A', 355)
+      drawDetailRow('Department / Specialty', formData.specialty || 'N/A', 395)
+      drawDetailRow('Consulting Specialist', docName || 'N/A', 435)
+      drawDetailRow('Preferred Date', formData.date || 'N/A', 475)
+      drawDetailRow('Preferred Time Slot', formData.time || 'N/A', 515)
+
+      // Status
+      ctx.textAlign = 'left'
+      ctx.fillStyle = '#64748B'
+      ctx.font = 'bold 13px system-ui, -apple-system, sans-serif'
+      ctx.fillText('BOOKING STATUS', 50, 560)
+
+      ctx.textAlign = 'right'
+      ctx.fillStyle = isSent ? '#10B981' : '#F59E0B'
+      ctx.font = 'bold 14px system-ui, -apple-system, sans-serif'
+      ctx.fillText(isSent ? 'REGISTERED / WAITING CONFIRMATION' : 'PENDING / WAITING WHATSAPP SEND', canvas.width - 50, 560)
+
+      // Horizontal divider for barcode
+      ctx.strokeStyle = '#E2E8F0'
+      ctx.beginPath()
+      ctx.moveTo(40, 590)
+      ctx.lineTo(canvas.width - 40, 590)
+      ctx.stroke()
+
+      // Clinical text
+      ctx.fillStyle = '#64748B'
+      ctx.font = 'italic 11px system-ui, -apple-system, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('Please present this slip at the front reception counter upon arrival.', canvas.width / 2, 635)
+
+      // Barcode
+      ctx.fillStyle = '#1E293B'
+      const barcodeStartX = canvas.width / 2 - 100
+      const barcodeY = 650
+      const barcodeHeight = 35
+      const pattern = [2, 1, 3, 2, 1, 4, 1, 2, 3, 1, 2, 2, 4, 1, 1, 3, 2, 1, 2, 3, 2, 1]
+      let currentX = barcodeStartX
+      for (let i = 0; i < pattern.length; i++) {
+        const width = pattern[i] * 2.2
+        if (i % 2 === 0) {
+          ctx.fillRect(currentX, barcodeY, width, barcodeHeight)
+        }
+        currentX += width
+      }
+
+      ctx.fillStyle = '#64748B'
+      ctx.font = '10px monospace'
+      ctx.fillText(`FMC-${Date.now().toString().slice(-8)}`, canvas.width / 2, 700)
+
+      const dataUrl = canvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.download = `fathima_booking_${(formData.name || 'patient').toLowerCase().replace(/\s+/g, '_')}.png`
+      link.href = dataUrl
+      link.click()
+    }
+
+    headerImg.onload = drawContent
+    headerImg.onerror = drawContent
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    setSuccess(true)
 
     // Lookup selected doctor's full name based on selection code
     const doctorObj = doctors.find(d => d.code === formData.doctor)
@@ -185,17 +360,9 @@ export default function AppointmentView({ lang, prefill }) {
                     `_Sent via Fathima Medical Website Booking Desk_`
 
     const waUrl = `https://wa.me/918086537077?text=${encodeURIComponent(message)}`
-
-    // Open WhatsApp in a new tab after a brief delay for local checkmark animation feedback
-    setTimeout(() => {
-      window.open(waUrl, '_blank')
-    }, 800)
-
-    // Reset local form states
-    setTimeout(() => {
-      setSuccess(false)
-      setFormData({ name: '', phone: '', age: '', gender: 'Male', specialty: 'General Medicine', doctor: 'FR', date: '', time: '', symptoms: '' })
-    }, 4500)
+    setWaLink(waUrl)
+    setSuccess(true)
+    setIsSent(false)
   }
 
   return (
@@ -240,21 +407,128 @@ export default function AppointmentView({ lang, prefill }) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center text-center py-12"
+              className="flex flex-col items-center text-center py-6 animate-fade-in"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6 border-2 border-emerald-500 animate-bounce">
-                <CheckCircle className="w-8 h-8" />
+              {/* Slip Card */}
+              <div className="w-full max-w-lg bg-white border border-[#E0EBFC] rounded-3xl shadow-lg overflow-hidden mb-8 text-left">
+                {/* Slip Card Header with Background Image */}
+                <div className="relative w-full h-44 flex items-center justify-center text-center">
+                  <img 
+                    src="/herosection/c1.png" 
+                    alt="Success Slip Background" 
+                    className="absolute inset-0 w-full h-full object-cover object-center scale-105 filter brightness-95"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0B4DBB]/95 via-[#0B4DBB]/85 to-blue-950/40" />
+                  
+                  <div className="relative z-10 text-white flex flex-col items-center px-6">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center mb-2 backdrop-blur-sm animate-bounce">
+                      <CheckCircle className="w-6 h-6" />
+                    </div>
+                    <h2 className={`font-heading font-black text-xl text-white ${
+                      lang === 'ML' ? 'font-malayalam font-bold' : ''
+                    }`}>
+                      {current.successTitle}
+                    </h2>
+                    <p className={`text-blue-100 text-[11px] mt-1 leading-normal max-w-xs ${
+                      lang === 'ML' ? 'font-malayalam font-medium' : ''
+                    }`}>
+                      {current.successDesc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Slip Card Details Table */}
+                <div className="p-6 md:p-8 space-y-4 bg-slate-50/50">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider text-left">
+                    {lang === 'EN' ? 'Consultation Details' : lang === 'ML' ? 'ബുക്കിംഗ് വിവരങ്ങൾ' : 'تفاصيل الاستشارة'}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Patient Name' : lang === 'ML' ? 'രോഗിയുടെ പേര്' : 'اسم المريض'}</span>
+                      <span className="font-bold text-slate-800">{formData.name}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Specialty' : lang === 'ML' ? 'വിഭാഗം' : 'التخصص'}</span>
+                      <span className="font-bold text-slate-800">{formData.specialty}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Consulting Doctor' : lang === 'ML' ? 'ഡോക്ടർ' : 'الطبيب'}</span>
+                      <span className="font-bold text-slate-800">
+                        {doctors.find(d => d.code === formData.doctor)?.name.split(' (')[0] || formData.doctor}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Preferred Date' : lang === 'ML' ? 'തീയതി' : 'التاريخ'}</span>
+                      <span className="font-bold text-slate-800">{formData.date}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Preferred Time' : lang === 'ML' ? 'സമയം' : 'الوقت'}</span>
+                      <span className="font-bold text-slate-800">{formData.time}</span>
+                    </div>
+                    <div className="flex justify-between pb-1 text-sm">
+                      <span className="text-gray-500">{lang === 'EN' ? 'Status' : lang === 'ML' ? 'നിലവാരം' : 'الحالة'}</span>
+                      <span className={`font-black uppercase tracking-wide ${
+                        isSent ? 'text-emerald-600' : 'text-amber-500 animate-pulse'
+                      }`}>
+                        {isSent ? (
+                          lang === 'EN' ? 'Registered' : lang === 'ML' ? 'രജിസ്റ്റർ ചെയ്തു' : 'مسجل'
+                        ) : (
+                          lang === 'EN' ? 'Pending Send' : lang === 'ML' ? 'സന്ദേശം അയക്കുക' : 'في انتظار الإرسال'
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h2 className={`font-heading font-bold text-2xl text-emerald-600 mb-3 ${
-                lang === 'ML' ? 'font-malayalam font-bold' : ''
-              }`}>
-                {current.successTitle}
-              </h2>
-              <p className={`text-gray-500 max-w-md leading-relaxed text-sm ${
-                lang === 'ML' ? 'font-malayalam font-medium' : ''
-              }`}>
-                {current.successDesc}
-              </p>
+
+              {/* Action Buttons */}
+              <div className="w-full max-w-lg flex flex-col sm:flex-row gap-3">
+                {!isSent ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        window.open(waLink, '_blank', 'noopener,noreferrer')
+                        setIsSent(true)
+                      }}
+                      className="flex-grow py-3 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-extrabold rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer text-sm font-heading"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      {lang === 'EN' && 'Send to WhatsApp to Complete'}
+                      {lang === 'ML' && 'ബുക്കിംഗ് പൂർത്തിയാക്കാൻ വാട്സ്ആപ്പ് അയക്കുക'}
+                      {lang === 'AR' && 'إرسال إلى واتساب لإتمام الحجز'}
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="py-3 px-6 bg-white hover:bg-slate-50 text-red-500 border border-red-200 font-bold rounded-xl transition-all cursor-pointer text-sm shrink-0"
+                    >
+                      {lang === 'EN' && 'Cancel'}
+                      {lang === 'ML' && 'റദ്ദാക്കുക'}
+                      {lang === 'AR' && 'إلغاء'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleDownloadImage}
+                      className="flex-grow py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer text-sm"
+                    >
+                      <Download className="w-4 h-4" />
+                      {lang === 'EN' && 'Save Confirmation to Gallery'}
+                      {lang === 'ML' && 'ഗാലറിയിലേക്ക് സേവ് ചെയ്യുക'}
+                      {lang === 'AR' && 'حفظ التأكيد في المعرض'}
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="py-3 px-6 bg-white hover:bg-slate-50 text-slate-600 font-bold border border-[#E0EBFC] rounded-xl transition-all cursor-pointer text-sm shrink-0"
+                    >
+                      {lang === 'EN' && 'Book Another Consultation'}
+                      {lang === 'ML' && 'മറ്റൊരു ബുക്കിംഗ്'}
+                      {lang === 'AR' && 'حجز آخر'}
+                    </button>
+                  </>
+                )}
+              </div>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">

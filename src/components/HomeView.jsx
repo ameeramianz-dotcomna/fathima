@@ -171,9 +171,9 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
             
             {/* Card 1: Upload Prescription */}
             <motion.div
-              whileHover={{ y: -6, shadow: 'md' }}
+              whileHover={{ y: -6 }}
               onClick={() => onNavigate('delivery')}
-              className="bg-white border border-[#E0EBFC] hover:border-[#0B4DBB]/40 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer text-left flex flex-col group justify-between"
+              className="bg-blue-50/30 border border-blue-200/65 hover:border-[#0B4DBB] p-6 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-blue-100/60 transition-all cursor-pointer text-left flex flex-col group justify-between animate-fade-in"
             >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0B4DBB] border border-blue-100 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
@@ -201,9 +201,9 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
 
             {/* Card 2: Health Packages */}
             <motion.div
-              whileHover={{ y: -6, shadow: 'md' }}
+              whileHover={{ y: -6 }}
               onClick={() => onNavigate('checkups')}
-              className="bg-white border border-[#E0EBFC] hover:border-[#0B4DBB]/40 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer text-left flex flex-col group justify-between"
+              className="bg-teal-50/30 border border-teal-200/65 hover:border-teal-500 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-teal-100/60 transition-all cursor-pointer text-left flex flex-col group justify-between"
             >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
@@ -231,9 +231,9 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
 
             {/* Card 3: Find Doctor */}
             <motion.div
-              whileHover={{ y: -6, shadow: 'md' }}
+              whileHover={{ y: -6 }}
               onClick={() => onNavigate('doctors')}
-              className="bg-white border border-[#E0EBFC] hover:border-[#0B4DBB]/40 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer text-left flex flex-col group justify-between"
+              className="bg-indigo-50/30 border border-indigo-200/65 hover:border-indigo-500 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-indigo-100/60 transition-all cursor-pointer text-left flex flex-col group justify-between"
             >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
@@ -261,11 +261,11 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
 
             {/* Card 4: WhatsApp Support */}
             <motion.a
-              whileHover={{ y: -6, shadow: 'md' }}
+              whileHover={{ y: -6 }}
               href="https://wa.me/918086537077"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white border border-[#E0EBFC] hover:border-emerald-500/40 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer text-left flex flex-col group justify-between"
+              className="bg-emerald-50/30 border border-emerald-200/65 hover:border-emerald-500 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-emerald-100/60 transition-all cursor-pointer text-left flex flex-col group justify-between"
             >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
@@ -345,13 +345,33 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { title: current.feat1, color: 'text-blue-600 bg-blue-50 border-blue-100', icon: Clock },
-                { title: current.feat2, color: 'text-emerald-600 bg-emerald-50 border-emerald-100', icon: Heart },
-                { title: current.feat3, color: 'text-teal-600 bg-teal-50 border-teal-100', icon: Award },
-                { title: current.feat4, color: 'text-orange-600 bg-orange-50 border-orange-100', icon: ShieldAlert }
+                { 
+                  title: current.feat1, 
+                  cardStyle: 'bg-blue-50/20 border-blue-200/50 hover:border-blue-400 hover:shadow-md hover:shadow-blue-100/50', 
+                  iconColor: 'text-blue-600 bg-blue-50 border-blue-100', 
+                  icon: Clock 
+                },
+                { 
+                  title: current.feat2, 
+                  cardStyle: 'bg-emerald-50/20 border-emerald-200/50 hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-100/50', 
+                  iconColor: 'text-emerald-600 bg-emerald-50 border-emerald-100', 
+                  icon: Heart 
+                },
+                { 
+                  title: current.feat3, 
+                  cardStyle: 'bg-teal-50/20 border-teal-200/50 hover:border-teal-400 hover:shadow-md hover:shadow-teal-100/50', 
+                  iconColor: 'text-teal-600 bg-teal-50 border-teal-100', 
+                  icon: Award 
+                },
+                { 
+                  title: current.feat4, 
+                  cardStyle: 'bg-orange-50/20 border-orange-200/50 hover:border-orange-400 hover:shadow-md hover:shadow-orange-100/50', 
+                  iconColor: 'text-orange-600 bg-orange-50 border-orange-100', 
+                  icon: ShieldAlert 
+                }
               ].map((feat, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-4 bg-white border border-[#E0EBFC] rounded-2xl text-left hover:shadow-sm transition-all">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${feat.color}`}>
+                <div key={idx} className={`flex items-center gap-3 p-4 rounded-2xl text-left border transition-all ${feat.cardStyle}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${feat.iconColor}`}>
                     <feat.icon className="w-4.5 h-4.5" />
                   </div>
                   <span className={`text-xs font-extrabold text-gray-700 leading-tight ${
@@ -468,11 +488,11 @@ export default function HomeView({ lang, onNavigate, onOpenAppointment }) {
             alt="Clinical Quality Assurance" 
             className="w-full h-full object-cover object-center scale-105" 
           />
-          {/* Deep Brand Blue Gradient Overlay */}
+          {/* Elegant Premium Dark Charcoal Gradient Overlay to decrease the blue shade, matching zains-hospital aesthetics */}
           <div className={`absolute inset-0 bg-gradient-to-r ${
             isRtl 
-              ? 'from-transparent via-[#0B4DBB]/80 to-[#0B4DBB]/95' 
-              : 'from-[#0B4DBB]/95 via-[#0B4DBB]/80 to-transparent'
+              ? 'from-transparent via-black/60 to-black/85' 
+              : 'from-black/85 via-black/60 to-transparent'
           }`} />
         </div>
 

@@ -35,19 +35,19 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
       mobileImage: '/herosection/b2.png',
       text: {
         EN: {
-          title: 'Expert Eye Care Services',
-          subtitle: 'Comprehensive eye examinations and advanced vision treatments for all ages.',
-          btnText: 'Find a Specialist'
+          title: 'Diagnostic Health Checkups',
+          subtitle: 'Comprehensive diagnostic health screenings and clinical checkups for your family.',
+          btnText: 'Explore Packages'
         },
         ML: {
-          title: 'വിദഗ്ദ്ധ നേത്രരോഗ ചികിത്സാ സേവനങ്ങൾ',
-          subtitle: 'എല്ലാ പ്രായക്കാർക്കും സമഗ്രമായ നേത്ര പരിശോധനകളും നൂതന കാഴ്ച ചികിത്സകളും.',
-          btnText: 'സ്പെഷ്യലിസ്റ്റിനെ കണ്ടെത്തുക'
+          title: 'സമഗ്ര ആരോഗ്യ പരിശോധനകൾ',
+          subtitle: 'നിങ്ങളുടെ കുടുംബത്തിനായി സമഗ്രമായ ആരോഗ്യ പരിശോധനകളും ക്ലിനിക്കൽ ചെക്കപ്പുകളും.',
+          btnText: 'പാക്കേജുകൾ കാണുക'
         },
         AR: {
-          title: 'خدمات رعاية العيون المتخصصة',
-          subtitle: 'فحوصات شاملة للعيون وعلاجات متقدمة للنظر لجميع الأعمار.',
-          btnText: 'ابحث عن أخصائي'
+          title: 'فحوصات صحية تشخيصية',
+          subtitle: 'فحوصات صحية تشخيصية شاملة وفحوصات سريرية لعائلتك.',
+          btnText: 'استكشاف الباقات'
         }
       }
     },
@@ -133,8 +133,8 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Slider Viewport heights: Desktop 650px, Mobile 450px */}
-      <div className="relative w-full h-[450px] md:h-[650px] overflow-hidden flex items-center">
+      {/* Slider Viewport heights: Desktop dynamic aspect ratio h-[33.9vw] matching 2155x730 ratio, Mobile fixed h-[550px] */}
+      <div className="relative w-full h-[550px] md:h-[33.9vw] min-h-[550px] md:min-h-[520px] md:max-h-[680px] overflow-hidden flex items-center">
         
         {/* Background Image Layer with Crossfade and breathing Ken Burns Scale Effect */}
         <AnimatePresence mode="wait">
@@ -146,15 +146,21 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
             transition={{ duration: 0.8, ease: 'easeInOut' }}
             className="absolute inset-0 w-full h-full"
           >
-            {/* The actual image slowly scales up over slide lifespan */}
-            <motion.img
-              src={isMobile ? currentSlide.mobileImage : currentSlide.desktopImage}
-              alt="Fathima Medical Hero"
-              initial={{ scale: 1.0 }}
-              animate={{ scale: 1.08 }}
-              transition={{ scale: { duration: 3.5, ease: 'easeOut' } }}
-              className="w-full h-full object-cover object-center"
-            />
+            {/* Native browser source selection for instant response without hydration lag */}
+            <picture className="w-full h-full block">
+              <source media="(max-width: 767px)" srcSet={currentSlide.mobileImage} />
+              <source media="(min-width: 768px)" srcSet={currentSlide.desktopImage} />
+              
+              {/* The actual image slowly scales down to 1.0 to show maximum detail at end of phase */}
+              <motion.img
+                src={currentSlide.desktopImage}
+                alt="Fathima Medical Hero"
+                initial={{ scale: 1.04 }}
+                animate={{ scale: 1.0 }}
+                transition={{ scale: { duration: 5.5, ease: 'easeOut' } }}
+                className="w-full h-full object-cover object-center select-none pointer-events-none"
+              />
+            </picture>
             
             {/* Premium Dark Overlay with slight clinical teal tint for readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30 md:from-black/85 md:via-black/60 md:to-transparent" />
@@ -223,21 +229,21 @@ export default function HeroSlider({ lang, onOpenAppointment }) {
                 >
                   <button
                     onClick={onOpenAppointment}
-                    className={`w-full sm:w-auto px-6 py-3.5 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 ${
+                    className={`w-full sm:w-auto px-5 py-2.5 bg-[#0B4DBB] hover:bg-[#073a91] text-white font-bold rounded-xl text-sm md:text-base shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 ${
                       lang === 'ML' ? 'font-malayalam' : ''
                     }`}
                   >
-                    <Calendar className="w-5 h-5 shrink-0" />
+                    <Calendar className="w-4.5 h-4.5 shrink-0" />
                     <span>{content.btnText}</span>
                   </button>
 
                   <a
                     href="tel:+918086537077"
-                    className={`w-full sm:w-auto px-6 py-3.5 bg-[#FF1E2D] hover:bg-[#d61825] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 ${
+                    className={`w-full sm:w-auto px-5 py-2.5 bg-[#FF1E2D] hover:bg-[#d61825] text-white font-bold rounded-xl text-sm md:text-base shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 ${
                       lang === 'ML' ? 'font-malayalam' : ''
                     }`}
                   >
-                    <PhoneCall className="w-5 h-5 shrink-0" />
+                    <PhoneCall className="w-4.5 h-4.5 shrink-0" />
                     <span>
                       {lang === 'EN' && 'Emergency Contact'}
                       {lang === 'ML' && 'അടിയന്തിര നമ്പർ'}

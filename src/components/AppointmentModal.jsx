@@ -184,7 +184,7 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
                     `*Gender:* ${formData.gender}\n` +
                     `*Specialty:* ${formData.specialty}\n` +
                     `*Preferred Date:* ${formData.date}\n` +
-                    `*Preferred Time:* ${formData.time}\n` +
+                    `*Preferred Time:* ${formData.time || 'N/A'}\n` +
                     `----------------------------------------\n` +
                     `_Sent via Fathima Medical Website Modal Book Desk_`
 
@@ -285,7 +285,7 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
                       </div>
                       <div className="flex justify-between border-b border-gray-200/40 pb-1.5">
                         <span className="text-gray-400">{lang === 'EN' ? 'Preferred Time' : lang === 'ML' ? 'സമയം' : 'الوقت'}</span>
-                        <span className="font-bold text-slate-800">{formData.time}</span>
+                        <span className="font-bold text-slate-800">{formData.time || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between pb-0.5">
                         <span className="text-gray-400">{lang === 'EN' ? 'Status' : lang === 'ML' ? 'നിലവാരം' : 'الحالة'}</span>
@@ -445,11 +445,10 @@ export default function AppointmentModal({ isOpen, onClose, lang }) {
                     </div>
                     <div className="flex flex-col gap-1.5 text-left">
                       <label className={`text-sm font-bold text-gray-700 ${lang === 'ML' ? 'font-malayalam text-xs font-semibold' : ''}`}>
-                        {lang === 'EN' ? 'Preferred Time' : lang === 'ML' ? 'സമയം' : 'الوقت المفضل'}
+                        {lang === 'EN' ? 'Preferred Time (Optional)' : lang === 'ML' ? 'സമയം (ആവശ്യമെങ്കിൽ)' : 'الوقت المفضل (اختياري)'}
                       </label>
                       <input 
                         type="time" 
-                        required
                         className="w-full h-11 border border-[#E0EBFC] rounded-lg px-3 text-sm focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] outline-none bg-white"
                         value={formData.time}
                         onChange={e => setFormData({ ...formData, time: e.target.value })}

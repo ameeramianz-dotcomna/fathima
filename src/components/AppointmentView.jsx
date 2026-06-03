@@ -28,7 +28,7 @@ export default function AppointmentView({ lang, prefill }) {
       labelSpec: 'Clinical Specialty',
       labelDoc: 'Preferred Consulting Doctor',
       labelDate: 'Appointment Date',
-      labelTime: 'Preferred Time Slot',
+      labelTime: 'Preferred Time Slot (Optional)',
       labelSymptoms: 'Chief Complaints / Health Symptoms',
       placeholderName: 'e.g. John Doe',
       placeholderSymptoms: 'e.g. Fever for 2 days, chest discomfort...',
@@ -45,7 +45,7 @@ export default function AppointmentView({ lang, prefill }) {
       labelSpec: 'മെഡിക്കൽ വിഭാഗം',
       labelDoc: 'ഡോക്ടർ',
       labelDate: 'തീയതി',
-      labelTime: 'സമയം',
+      labelTime: 'സമയം (ആവശ്യമെങ്കിൽ)',
       labelSymptoms: 'ശാരീരിക ബുദ്ധിമുട്ടുകൾ / ലക്ഷണങ്ങൾ',
       placeholderName: 'ഉദാഹരണത്തിന്: പ്രണവ്',
       placeholderSymptoms: 'ഉദാഹരണത്തിന്: രണ്ട് ദിവസമായി പനി, തലവേദന...',
@@ -62,7 +62,7 @@ export default function AppointmentView({ lang, prefill }) {
       labelSpec: 'التخصص الطبي المطلوب',
       labelDoc: 'الطبيب الاستشاري المفضل',
       labelDate: 'تاريخ الموعد',
-      labelTime: 'الوقت المفضل والفرصة',
+      labelTime: 'الوقت المفضل (اختياري)',
       labelSymptoms: 'الشكاوى الرئيسية / الأعراض الصحية',
       placeholderName: 'مثال: أحمد عبد الله',
       placeholderSymptoms: 'مثال: حمى لمدة يومين، آلام في المفاصل...',
@@ -354,7 +354,7 @@ export default function AppointmentView({ lang, prefill }) {
                     `*Specialty:* ${formData.specialty}\n` +
                     `*Consultant Doctor:* ${docName}\n` +
                     `*Preferred Date:* ${formData.date}\n` +
-                    `*Preferred Time:* ${formData.time}\n` +
+                    `*Preferred Time:* ${formData.time || 'N/A'}\n` +
                     `*Symptoms / Complaints:* ${formData.symptoms || 'N/A'}\n` +
                     `----------------------------------------\n` +
                     `_Sent via Fathima Medical Website Booking Desk_`
@@ -463,8 +463,8 @@ export default function AppointmentView({ lang, prefill }) {
                       <span className="font-bold text-slate-800">{formData.date}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-100 pb-2 text-sm">
-                      <span className="text-gray-500">{lang === 'EN' ? 'Preferred Time' : lang === 'ML' ? 'സമയം' : 'الوقت'}</span>
-                      <span className="font-bold text-slate-800">{formData.time}</span>
+                      <span className="text-gray-500">{lang === 'EN' ? 'Preferred Time (Optional)' : lang === 'ML' ? 'സമയം (ഓപ്ഷണൽ)' : 'الوقت (اختياري)'}</span>
+                      <span className="font-bold text-slate-800">{formData.time || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between pb-1 text-sm">
                       <span className="text-gray-500">{lang === 'EN' ? 'Status' : lang === 'ML' ? 'നിലവാരം' : 'الحالة'}</span>
@@ -680,7 +680,6 @@ export default function AppointmentView({ lang, prefill }) {
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input 
                       type="time" 
-                      required
                       className="w-full h-11 border border-[#E0EBFC] hover:border-[#0B4DBB]/40 focus:border-[#0B4DBB] focus:ring-1 focus:ring-[#0B4DBB] rounded-lg pl-10 pr-3 text-sm outline-none bg-white transition-colors"
                       value={formData.time}
                       onChange={e => setFormData({ ...formData, time: e.target.value })}
